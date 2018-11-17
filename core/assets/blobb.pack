@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 Player Running
   rotate: false
-  xy: 2, 2
+  xy: 0, 0
   size: 32, 256
   orig: 32, 256
   offset: 0, 0

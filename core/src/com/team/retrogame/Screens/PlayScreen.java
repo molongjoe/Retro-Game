@@ -60,7 +60,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(RetroGame game) {
         //helps to locate sprites
-        atlas = new TextureAtlas("blobb.pack");
+        atlas = new TextureAtlas("RunningMan.atlas");
 
         this.game = game;
         //create cam used to follow the player through game world
@@ -228,14 +228,14 @@ public class PlayScreen implements Screen {
     public void pause() {
         setToPause = true;
         setToResume = false;
-        music.pause();
+        //music.pause();
     }
 
     @Override
     public void resume() {
         setToResume = true;
         setToPause = false;
-        music.play();
+        //music.play();
     }
 
     @Override

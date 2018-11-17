@@ -22,6 +22,9 @@ import com.team.retrogame.Screens.PlayScreen;
 //Sprite class for RetroGame. Draws physics body, sprites, and handles behavior
 public class Blobb extends Sprite {
 
+    String[] regions = {"Running Grey-1", "Running Grey-2","Running Grey-3","Running Grey-4","Running Grey-5",
+            "Running Grey-6","Running Grey-7", "Running Grey-8"};
+
     //All the states RetroGame can be in
     public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD}
 
@@ -56,20 +59,25 @@ public class Blobb extends Sprite {
         Array<TextureRegion> frames = new Array<TextureRegion>();
 
         //get run animation frames and add them to BlobbRun Animation
-        for(int i = 1; i<8; i++)
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("Player Running"), 8, 8, 16, 16));
+
+        for(int i = 0; i<8; i++) {
+            frames.add(new TextureRegion(screen.getAtlas().findRegion(regions[i]), 0, 0, 16, 16));
+        }
+
+
+
         BlobbRun = new Animation<TextureRegion>(0.1f, frames);
 
         frames.clear();
 
         //get jump animation frames and add them to BlobbJump Animation
-        BlobbJump = new TextureRegion(screen.getAtlas().findRegion("Player Running"), 8, 8, 16, 16);
+        BlobbJump = new TextureRegion(screen.getAtlas().findRegion("Running Grey-1"), 0, 0, 16, 16);
 
         //create texture region for RetroGame standing
-        BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Player Running"), 8, 8, 16, 16);
+        BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running Grey-1"), 0, 0, 16, 16);
 
         //create dead RetroGame texture region
-        BlobbDead = new TextureRegion(screen.getAtlas().findRegion("Player Running"), 96, 0, 16, 16);
+        BlobbDead = new TextureRegion(screen.getAtlas().findRegion("Running Grey-1"), 96, 0, 16, 16);
 
         //define RetroGame in Box2d
         defineBlobb();
