@@ -121,12 +121,14 @@ public class PlayScreen implements Screen {
         //if RetroGame isn't dead, these inputs are valid
         if(player.currentState != Blobb.State.DEAD) {
             if(setToResume || !setToPause) {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.UP))
+                if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.b2Body.getLinearVelocity().y == 0))
                     player.b2Body.applyLinearImpulse(new Vector2(0, 3.7f), player.b2Body.getWorldCenter(), true);
                 if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2Body.getLinearVelocity().x <= 2)
                     player.b2Body.applyLinearImpulse(new Vector2(0.08f, 0), player.b2Body.getWorldCenter(), true);
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2Body.getLinearVelocity().x >= -2)
                     player.b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), player.b2Body.getWorldCenter(), true);
+                if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
+                    player.b2Body.applyLinearImpulse(new Vector2(0, -3.7f), player.b2Body.getWorldCenter(), true);
 
             }
 
