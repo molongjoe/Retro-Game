@@ -27,12 +27,14 @@ public class Blobb extends Sprite {
 
     String[] jumping = {"Jumping-1","Jumping-2","Jumping-3"};
 
+    String[] splatting = {"Splat-1", "Splat-2", "Splat-3","Splat-4"};
+
     //All the states RetroGame can be in
     public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD}
 
     //log current state and previous state
     public State currentState;
-    private State previousState;
+    public State previousState;
 
     private World world;
     public Body b2Body;
@@ -41,6 +43,7 @@ public class Blobb extends Sprite {
     private TextureRegion BlobbStand;
     private Animation<TextureRegion> BlobbRun;
     private Animation<TextureRegion> BlobbJump;
+    private Animation<TextureRegion> BlobbSplat;
     private TextureRegion BlobbDead;
 
     //behavioral checks
@@ -62,6 +65,7 @@ public class Blobb extends Sprite {
         //use for animation later
         Array<TextureRegion> running_frames = new Array<TextureRegion>();
         Array<TextureRegion> jumping_frames = new Array<TextureRegion>();
+        Array<TextureRegion> splatting_frames = new Array<TextureRegion>();
 
         //Add the different running sprites to our running frames
         for(int i = 0; i <= 7; i++) {
@@ -73,16 +77,21 @@ public class Blobb extends Sprite {
             jumping_frames.add(new TextureRegion(screen.getAtlas().findRegion(jumping[i]), 0, 0, 16, 16));
         }
 
+        for(int i = 0; i <= 3; i++){
+            splatting_frames.add(new TextureRegion(screen.getAtlas().findRegion(splatting[i]), 0, 0, 16, 16));
+        }
+
 
         //Create the animation of Running
         BlobbRun = new Animation<TextureRegion>(0.1f, running_frames);
-
         running_frames.clear();
 
         //Create the animation of Jumping
         BlobbJump = new Animation<TextureRegion>(0.1f, jumping_frames);
-
         jumping_frames.clear();
+
+        //Create the animation of Splatting
+        BlobbSplat = new Animation<TextureRegion>(0.1f, splatting_frames);
 
         //create texture region for RetroGame standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
@@ -107,7 +116,6 @@ public class Blobb extends Sprite {
     private TextureRegion getFrame(float dt) {
         //get Blobbs current state. ie. jumping, running, standing...
         currentState = getState();
-
         TextureRegion region;
 
         //depending on the state, get corresponding animation keyFrame.
@@ -123,6 +131,12 @@ public class Blobb extends Sprite {
                 break;
             case FALLING:
             case STANDING:
+                /* Cant get this to work it is supposed to call the splat animation but we
+                never actually get into this case statement for some reason.
+                if(previousState == State.FALLING){
+                    region = BlobbSplat.getKeyFrame(stateTimer, false);
+                }
+                */
             default:
                 region = BlobbStand;
                 break;
@@ -154,6 +168,7 @@ public class Blobb extends Sprite {
 
     private State getState(){
         //Test to Box2D for velocity on the X and Y-Axis
+
         if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
             return State.JUMPING;
         else if((b2Body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))

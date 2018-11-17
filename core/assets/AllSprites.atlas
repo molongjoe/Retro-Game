@@ -4,16 +4,23 @@ size: 128,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+Blue
+  rotate: false
+  xy: 92, 38
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 Dirt
   rotate: false
-  xy: 74, 92
+  xy: 56, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Floating-1
   rotate: false
-  xy: 2, 38
+  xy: 20, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -27,28 +34,28 @@ Floating-2
   index: -1
 Floating-3
   rotate: false
-  xy: 38, 74
+  xy: 74, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Floating-4
   rotate: false
-  xy: 56, 92
+  xy: 38, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Grab-1
   rotate: false
-  xy: 2, 2
+  xy: 38, 74
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Grab-2
   rotate: false
-  xy: 110, 56
+  xy: 110, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -62,21 +69,21 @@ Grab-3
   index: -1
 Grab-4
   rotate: false
-  xy: 38, 2
+  xy: 2, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Grab-5
   rotate: false
-  xy: 110, 74
+  xy: 92, 56
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Grab-6
   rotate: false
-  xy: 20, 2
+  xy: 74, 92
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -88,9 +95,16 @@ Grass
   orig: 16, 16
   offset: 0, 0
   index: -1
+Green
+  rotate: false
+  xy: 110, 92
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 Grey Brick 
   rotate: false
-  xy: 2, 20
+  xy: 74, 74
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -104,7 +118,7 @@ Jumping-1
   index: -1
 Jumping-2
   rotate: false
-  xy: 74, 38
+  xy: 74, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -118,21 +132,35 @@ Jumping-3
   index: -1
 Pound-1
   rotate: false
-  xy: 74, 56
+  xy: 56, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Pound-2
   rotate: false
-  xy: 56, 2
+  xy: 74, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Pound-3
   rotate: false
-  xy: 20, 38
+  xy: 92, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+Purple
+  rotate: false
+  xy: 20, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+Red
+  rotate: false
+  xy: 2, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -146,7 +174,7 @@ Rocks
   index: -1
 Running-1
   rotate: false
-  xy: 92, 74
+  xy: 2, 74
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -160,14 +188,14 @@ Running-2
   index: -1
 Running-3
   rotate: false
-  xy: 74, 74
+  xy: 92, 92
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Running-4
   rotate: false
-  xy: 2, 56
+  xy: 38, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -195,56 +223,56 @@ Running-7
   index: -1
 Running-8
   rotate: false
-  xy: 92, 56
+  xy: 2, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Splat-1
   rotate: false
-  xy: 92, 92
+  xy: 38, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Splat-2
   rotate: false
-  xy: 110, 92
+  xy: 56, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Splat-3
   rotate: false
-  xy: 38, 20
+  xy: 74, 56
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Splat-4
   rotate: false
-  xy: 56, 74
+  xy: 92, 74
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Steel
   rotate: false
-  xy: 56, 38
+  xy: 110, 74
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Super-1
   rotate: false
-  xy: 74, 20
+  xy: 92, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Super-2
   rotate: false
-  xy: 56, 20
+  xy: 110, 56
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -265,14 +293,14 @@ Super-4
   index: -1
 Super-5
   rotate: false
-  xy: 2, 74
+  xy: 56, 92
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Super-10
   rotate: false
-  xy: 2, 74
+  xy: 56, 92
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -293,14 +321,21 @@ Super-7
   index: -1
 Super-8
   rotate: false
-  xy: 56, 56
+  xy: 2, 56
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Super-9
   rotate: false
-  xy: 38, 38
+  xy: 56, 56
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+Yellow
+  rotate: false
+  xy: 56, 74
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
