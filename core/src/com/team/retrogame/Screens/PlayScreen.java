@@ -60,7 +60,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(RetroGame game) {
         //helps to locate sprites
-        atlas = new TextureAtlas("RunningMan.atlas");
+        atlas = new TextureAtlas("AllSprites.atlas");
 
         this.game = game;
         //create cam used to follow the player through game world
