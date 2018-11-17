@@ -25,6 +25,8 @@ public class Blobb extends Sprite {
     String[] running = {"Running-1", "Running-2","Running-3","Running-4","Running-5",
             "Running-6","Running-7", "Running-8"};
 
+    String[] jumping = {"Jumping-1","Jumping-2","Jumping-3"};
+
     //All the states RetroGame can be in
     public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD}
 
@@ -38,7 +40,7 @@ public class Blobb extends Sprite {
     //All sprite Texture Regions and Animations for RetroGame
     private TextureRegion BlobbStand;
     private Animation<TextureRegion> BlobbRun;
-    private TextureRegion BlobbJump;
+    private Animation<TextureRegion> BlobbJump;
     private TextureRegion BlobbDead;
 
     //behavioral checks
@@ -56,22 +58,31 @@ public class Blobb extends Sprite {
         stateTimer = 0;
         runningRight = true;
 
-        Array<TextureRegion> frames = new Array<TextureRegion>();
+        //Make Texture Regions representing different frames that we will
+        //use for animation later
+        Array<TextureRegion> running_frames = new Array<TextureRegion>();
+        Array<TextureRegion> jumping_frames = new Array<TextureRegion>();
 
-        //get run animation frames and add them to BlobbRun Animation
+        //Add the different running sprites to our running frames
+        for(int i = 0; i <= 7; i++) {
+            running_frames.add(new TextureRegion(screen.getAtlas().findRegion(running[i]), 0, 0, 16, 16));
+        }
 
-        for(int i = 0; i<8; i++) {
-            frames.add(new TextureRegion(screen.getAtlas().findRegion(running[i]), 0, 0, 16, 16));
+        //Add the different jumping sprites to our jumping frames
+        for(int i = 0; i <= 2; i++) {
+            jumping_frames.add(new TextureRegion(screen.getAtlas().findRegion(jumping[i]), 0, 0, 16, 16));
         }
 
 
+        //Create the animation of Running
+        BlobbRun = new Animation<TextureRegion>(0.1f, running_frames);
 
-        BlobbRun = new Animation<TextureRegion>(0.1f, frames);
+        running_frames.clear();
 
-        frames.clear();
+        //Create the animation of Jumping
+        BlobbJump = new Animation<TextureRegion>(0.1f, jumping_frames);
 
-        //get jump animation frames and add them to BlobbJump Animation
-        BlobbJump = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
+        jumping_frames.clear();
 
         //create texture region for RetroGame standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
@@ -105,7 +116,7 @@ public class Blobb extends Sprite {
                 region = BlobbDead;
                 break;
             case JUMPING:
-                region = BlobbJump;
+                region = BlobbJump.getKeyFrame(stateTimer,false);
                 break;
             case RUNNING:
                 region = BlobbRun.getKeyFrame(stateTimer, true);
