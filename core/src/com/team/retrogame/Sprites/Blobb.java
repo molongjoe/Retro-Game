@@ -24,13 +24,14 @@ public class Blobb extends Sprite {
 
     String[] running = {"Running-1", "Running-2","Running-3","Running-4","Running-5",
             "Running-6","Running-7", "Running-8"};
-
     String[] jumping = {"Jumping-1","Jumping-2","Jumping-3"};
-
     String[] splatting = {"Splat-1", "Splat-2", "Splat-3","Splat-4"};
+    String[] pounding = {"Pound-1", "Pound-2", "Pound-3"};
+    String[] grabbing = {"Grab-1", "Grab-2", "Grab-3", "Grab-4", "Grab-5", "Grab-6"};
 
     //All the states RetroGame can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD}
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING
+    }
 
     //log current state and previous state
     public State currentState;
@@ -44,6 +45,9 @@ public class Blobb extends Sprite {
     private Animation<TextureRegion> BlobbRun;
     private Animation<TextureRegion> BlobbJump;
     private Animation<TextureRegion> BlobbSplat;
+    private Animation<TextureRegion> BlobbPound;
+    private Animation<TextureRegion> BlobbGround;
+    private Animation<TextureRegion> BlobbFall;
     private TextureRegion BlobbDead;
 
     //behavioral checks
@@ -66,6 +70,9 @@ public class Blobb extends Sprite {
         Array<TextureRegion> running_frames = new Array<TextureRegion>();
         Array<TextureRegion> jumping_frames = new Array<TextureRegion>();
         Array<TextureRegion> splatting_frames = new Array<TextureRegion>();
+        Array<TextureRegion> pounding_frames = new Array<TextureRegion>();
+        Array<TextureRegion> grabbing_frames = new Array<TextureRegion>();
+        Array<TextureRegion> falling_frames = new Array<TextureRegion>();
 
         //Add the different running sprites to our running frames
         for(int i = 0; i <= 7; i++) {
@@ -81,6 +88,18 @@ public class Blobb extends Sprite {
             splatting_frames.add(new TextureRegion(screen.getAtlas().findRegion(splatting[i]), 0, 0, 16, 16));
         }
 
+        for(int i = 0; i <= 2; i++){
+            pounding_frames.add(new TextureRegion(screen.getAtlas().findRegion(pounding[i]), 0, 0, 16, 16));
+        }
+
+        for(int i = 0; i <= 5; i++){
+            grabbing_frames.add(new TextureRegion(screen.getAtlas().findRegion(grabbing[i]), 0, 0, 16, 16));
+        }
+
+        for(int i = 2; i >= 0; i--){
+            falling_frames.add(new TextureRegion(screen.getAtlas().findRegion(jumping[i]), 0, 0, 16, 16));
+        }
+
 
         //Create the animation of Running
         BlobbRun = new Animation<TextureRegion>(0.1f, running_frames);
@@ -92,6 +111,15 @@ public class Blobb extends Sprite {
 
         //Create the animation of Splatting
         BlobbSplat = new Animation<TextureRegion>(0.1f, splatting_frames);
+
+        //Create the animation of Pounding
+        BlobbPound = new Animation<TextureRegion>(0.1f, pounding_frames);
+
+        //Create the animation of Grabbing
+        BlobbGround = new Animation<TextureRegion>(0.1f, grabbing_frames);
+
+        //Create the animation of Falling
+        BlobbFall = new Animation<TextureRegion>(0.1f, falling_frames);
 
         //create texture region for RetroGame standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
@@ -130,13 +158,13 @@ public class Blobb extends Sprite {
                 region = BlobbRun.getKeyFrame(stateTimer, true);
                 break;
             case FALLING:
+                region = BlobbFall.getKeyFrame(stateTimer, false);
             case STANDING:
-                /* Cant get this to work it is supposed to call the splat animation but we
-                never actually get into this case statement for some reason.
-                if(previousState == State.FALLING){
-                    region = BlobbSplat.getKeyFrame(stateTimer, false);
-                }
-                */
+            case SPLATTING:
+                region = BlobbSplat.getKeyFrame(stateTimer, false);
+            case POUNDING:
+                region = BlobbPound.getKeyFrame(stateTimer, false);
+
             default:
                 region = BlobbStand;
                 break;
@@ -174,11 +202,13 @@ public class Blobb extends Sprite {
         else if((b2Body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
             return State.JUMPING;
             //if negative in Y-Axis RetroGame is falling
-        else if (b2Body.getLinearVelocity().y < 0)
+        else if (b2Body.getLinearVelocity().y < 0 )
             return State.FALLING;
             //if RetroGame is positive or negative in the X axis he is running
         else if (b2Body.getLinearVelocity().x != 0)
             return State.RUNNING;
+        //else if (b2Body.getLinearVelocity().y < -3)
+            //return State.POUNDING;
             //if none of these return then he must be standing
         else
             return State.STANDING;
