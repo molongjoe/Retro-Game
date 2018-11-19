@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="240" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="169">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="240" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="169">
  <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
   <image source="tileset_gutter.png" width="594" height="504"/>
   <tile id="0">
@@ -116,7 +116,7 @@
  </tileset>
  <layer id="1" name="Background Color" width="240" height="13">
   <data encoding="base64" compression="zlib">
-   eJzt2TEKgDAMRuHU+9+mk0dzkyJCEUFKTZM2b/gWF5f/UYtJRI4kkkVfGvAO9Nk3zKQ0Vfqt0W9c1nsE/YJ+o3j2q7kN+vXPeo+gX9BvFHe/WegXF+tNoq3fP/us0e/8rPeJ735HfDsX9Otf2cTbM/jUcv/9Ol/pd37We4Rev73o1z/rPaKvX/7/xma9R/T3q9Uw/fpnvUe094v10fCaTuO7T/M=
+   eJzt1TEOgzAUREGT+1+Is6VB6agCfJDXRlNMg2TT7JOX1tr308fS8V/UrEylZ1P6HV96j+iXuvQe0S916T2iX+rSe0S/3JPeJJl+f3ft6Xd+6X3Sr98j+p1TeqM80+/R+3rmfHqLnJfeJs/2e5d+x7f++c549Mteeo/ol7r0HrneL++n4XfaAGRmD10=
   </data>
  </layer>
  <layer id="11" name="Graphic Layer" width="240" height="13">
