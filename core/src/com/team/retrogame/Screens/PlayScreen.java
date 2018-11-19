@@ -76,7 +76,7 @@ public class PlayScreen implements Screen {
 
         //Load the map and setup the map renderer
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("sandbox.tmx");
+        map = mapLoader.load("TestMap.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / RetroGame.PPM);
 
         //initially set the gamcam to be centered correctly at the start of of map
@@ -156,7 +156,8 @@ public class PlayScreen implements Screen {
 
             //attach the gamecam to our players.x coordinate
             if (player.currentState != Blobb.State.DEAD) {
-                gamecam.position.x = player.b2Body.getPosition().x;
+                gamecam.position.x = gamePort.getWorldWidth()/2;
+                gamecam.position.y = gamePort.getWorldHeight()/2;
             }
 
             //update the gamecam with correct coordinates after changes

@@ -16,8 +16,8 @@ public class RetroGame extends Game {
 	play area. PPM (Pixels per Meter) is the scaling factor used to make the conversion
 	to this area
 	 */
-	public static final int V_WIDTH = 400;
-	public static final int V_HEIGHT = 208;
+	public static final int V_WIDTH = 640;
+	public static final int V_HEIGHT = 380;
 	public static final float PPM = 100;
 
 	/*

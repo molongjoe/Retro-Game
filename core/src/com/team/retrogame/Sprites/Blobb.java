@@ -19,7 +19,7 @@ import com.team.retrogame.Screens.PlayScreen;
  * created by Ben Mankin on 09/13/18.
  */
 
-//Sprite class for RetroGame. Draws physics body, sprites, and handles behavior
+//Sprite class for Blobb. Draws physics body, sprites, and handles behavior
 public class Blobb extends Sprite {
 
     String[] running = {"Running-1", "Running-2","Running-3","Running-4","Running-5",
@@ -29,7 +29,7 @@ public class Blobb extends Sprite {
     String[] pounding = {"Pound-1", "Pound-2", "Pound-3"};
     String[] grabbing = {"Grab-1", "Grab-2", "Grab-3", "Grab-4", "Grab-5", "Grab-6"};
 
-    //All the states RetroGame can be in
+    //All the states Blobb can be in
     public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING
     }
 
@@ -40,7 +40,7 @@ public class Blobb extends Sprite {
     private World world;
     public Body b2Body;
 
-    //All sprite Texture Regions and Animations for RetroGame
+    //All sprite Texture Regions and Animations for Blobb
     private TextureRegion BlobbStand;
     private Animation<TextureRegion> BlobbRun;
     private Animation<TextureRegion> BlobbJump;
@@ -121,13 +121,13 @@ public class Blobb extends Sprite {
         //Create the animation of Falling
         BlobbFall = new Animation<TextureRegion>(0.1f, falling_frames);
 
-        //create texture region for RetroGame standing
+        //create texture region for Blobb standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
 
-        //create dead RetroGame texture region
+        //create dead Blobb texture region
         BlobbDead = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 96, 0, 16, 16);
 
-        //define RetroGame in Box2d
+        //define Blobb in Box2d
         defineBlobb();
 
         //set initial values for Blobbs location, width and height. And initial frame as BlobbStand.
@@ -170,13 +170,13 @@ public class Blobb extends Sprite {
                 break;
         }
 
-        //if RetroGame is running left and the texture isnt facing left... flip it.
+        //if Blobb is running left and the texture isnt facing left... flip it.
         if ((b2Body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
             region.flip(true, false);
             runningRight = false;
         }
 
-        //if RetroGame is running right and the texture isnt facing right... flip it.
+        //if Blobb is running right and the texture isnt facing right... flip it.
         else if((b2Body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX()) {
             region.flip(true, false);
             runningRight = true;
@@ -201,10 +201,10 @@ public class Blobb extends Sprite {
             return State.JUMPING;
         else if((b2Body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
             return State.JUMPING;
-            //if negative in Y-Axis RetroGame is falling
+            //if negative in Y-Axis Blobb is falling
         else if (b2Body.getLinearVelocity().y < 0 )
             return State.FALLING;
-            //if RetroGame is positive or negative in the X axis he is running
+            //if Blobb is positive or negative in the X axis he is running
         else if (b2Body.getLinearVelocity().x != 0)
             return State.RUNNING;
         //else if (b2Body.getLinearVelocity().y < -3)
@@ -219,10 +219,10 @@ public class Blobb extends Sprite {
         return stateTimer;
     }
 
-    //Define RetroGame in the Box2D world
+    //Define Blobb in the Box2D world
     private void defineBlobb() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(32 / RetroGame.PPM, 32 / RetroGame.PPM);
+        bdef.position.set(64 / RetroGame.PPM, 128 / RetroGame.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2Body = world.createBody(bdef);
 
@@ -231,14 +231,14 @@ public class Blobb extends Sprite {
         CircleShape shape = new CircleShape();
         shape.setRadius(6 / RetroGame.PPM);
 
-        //Set what RetroGame can collide with
+        //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
         fdef.filter.maskBits = RetroGame.GROUND_BIT;
 
         fdef.shape = shape;
         b2Body.createFixture(fdef).setUserData(this);
 
-        //Give RetroGame an edge to serve as his feet
+        //Give Blobb an edge to serve as his feet
         FixtureDef fdef2 = new FixtureDef();
         EdgeShape feet = new EdgeShape();
         feet.set(new Vector2(-2 / RetroGame.PPM, -6 / RetroGame.PPM), new Vector2(2 / RetroGame.PPM, -6 / RetroGame.PPM));
@@ -247,7 +247,7 @@ public class Blobb extends Sprite {
         b2Body.createFixture(fdef2).setUserData("feet");
     }
 
-    //Draw RetroGame's physics body in the world
+    //Draw Blobb's physics body in the world
     public void draw(Batch batch){
         super.draw(batch);
     }
