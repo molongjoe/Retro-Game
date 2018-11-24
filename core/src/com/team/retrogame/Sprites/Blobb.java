@@ -5,12 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.EdgeShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.team.retrogame.RetroGame;
 import com.team.retrogame.Screens.PlayScreen;
@@ -228,8 +223,8 @@ public class Blobb extends Sprite {
 
         //Box2D fixture settings
         FixtureDef fdef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setRadius(6 / RetroGame.PPM);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(5 / RetroGame.PPM, 5 / RetroGame.PPM);
 
         //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;

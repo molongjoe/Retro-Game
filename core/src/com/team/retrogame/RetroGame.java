@@ -17,7 +17,7 @@ public class RetroGame extends Game {
 	to this area
 	 */
 	public static final int V_WIDTH = 640;
-	public static final int V_HEIGHT = 380;
+	public static final int V_HEIGHT = 350;
 	public static final float PPM = 100;
 
 	/*
