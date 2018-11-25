@@ -194,8 +194,8 @@ public class Blobb extends Sprite {
 
         if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
             return State.JUMPING;
-        else if((b2Body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
-            return State.JUMPING;
+        //else if((b2Body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
+            //return State.JUMPING;
             //if negative in Y-Axis Blobb is falling
         else if (b2Body.getLinearVelocity().y < 0 )
             return State.FALLING;
@@ -217,7 +217,7 @@ public class Blobb extends Sprite {
     //Define Blobb in the Box2D world
     private void defineBlobb() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(64 / RetroGame.PPM, 128 / RetroGame.PPM);
+        bdef.position.set(64 / RetroGame.PPM, 16 / RetroGame.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2Body = world.createBody(bdef);
 
@@ -226,11 +226,13 @@ public class Blobb extends Sprite {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(5 / RetroGame.PPM, 5 / RetroGame.PPM);
 
+
         //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
         fdef.filter.maskBits = RetroGame.GROUND_BIT;
 
         fdef.shape = shape;
+        //fdef.friction = (float)0.5;
         b2Body.createFixture(fdef).setUserData(this);
 
         //Give Blobb an edge to serve as his feet

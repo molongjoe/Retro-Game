@@ -58,7 +58,7 @@ public class PlayScreen implements Screen {
     private boolean setToPause;
     private boolean setToResume;
 
-    public PlayScreen(RetroGame game) {
+    public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
         atlas = new TextureAtlas("AllSprites.atlas");
 
@@ -76,7 +76,7 @@ public class PlayScreen implements Screen {
 
         //Load the map and setup the map renderer
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("TestMap.tmx");
+        map = mapLoader.load(newMap);
         renderer = new OrthogonalTiledMapRenderer(map, 1 / RetroGame.PPM);
 
         //initially set the gamcam to be centered correctly at the start of of map
@@ -154,7 +154,7 @@ public class PlayScreen implements Screen {
 
             player.update(dt);
 
-            //attach the gamecam to our players.x coordinate
+            //attach the gamecam to the world
             if (player.currentState != Blobb.State.DEAD) {
                 gamecam.position.x = gamePort.getWorldWidth()/2;
                 gamecam.position.y = gamePort.getWorldHeight()/2;
@@ -198,6 +198,13 @@ public class PlayScreen implements Screen {
             dispose();
         }
 
+        //if a floor is cleared, set the screen to be the new floor (lacks transition)
+        if (floorClear()) {
+
+            game.setScreen(new PlayScreen(game, "TestMapFloor2.tmx"));
+            dispose();
+        }
+
         if (setToPause) {
             pause.stage.draw();
         }
@@ -209,6 +216,15 @@ public class PlayScreen implements Screen {
 
     private boolean gameOver() {
         if(player.currentState == Blobb.State.DEAD && player.getStateTimer() > 3) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean floorClear() {
+        //if player has reached the top of the floor, the module is complete
+        if ((player.getY() > RetroGame.V_HEIGHT/RetroGame.PPM) &&
+                ((player.currentState == Blobb.State.STANDING) || (player.currentState == Blobb.State.RUNNING))) {
             return true;
         }
         return false;

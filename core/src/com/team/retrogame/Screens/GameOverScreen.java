@@ -55,7 +55,7 @@ public class GameOverScreen implements Screen {
     public void render(float delta) {
         //upon Mouse click, set the screen to a new PlayScreen and close the gameoverscreen
         if(Gdx.input.justTouched()) {
-            game.setScreen(new PlayScreen((RetroGame) game));
+            game.setScreen(new PlayScreen((RetroGame) game, "TestMap.tmx"));
             dispose();
         }
         Gdx.gl.glClearColor(0,0,0,1);
