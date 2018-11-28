@@ -20,7 +20,7 @@ public class Blobb extends Sprite {
     String[] running = {"Running-1", "Running-2","Running-3","Running-4","Running-5",
             "Running-6","Running-7", "Running-8"};
     String[] jumping = {"Jumping-1","Jumping-2","Jumping-3"};
-    String[] splatting = {"Splat-1", "Splat-2", "Splat-3","Splat-4"};
+    String[] splatting = {"Splat-1", "Splat-2", "Splat-3","Splat-4", "Splat-3", "Splat-2"};
     String[] pounding = {"Pound-1", "Pound-2", "Pound-3"};
     String[] grabbing = {"Grab-1", "Grab-2", "Grab-3", "Grab-4", "Grab-5", "Grab-6"};
 
@@ -50,6 +50,7 @@ public class Blobb extends Sprite {
     private boolean runningRight;
     public boolean setToPound = false;
     public boolean setToFloat = false;
+    public boolean setToSplat = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -79,7 +80,7 @@ public class Blobb extends Sprite {
             jumping_frames.add(new TextureRegion(screen.getAtlas().findRegion(jumping[i]), 0, 0, 16, 16));
         }
 
-        for(int i = 0; i <= 3; i++){
+        for(int i = 0; i <= 5; i++){
             splatting_frames.add(new TextureRegion(screen.getAtlas().findRegion(splatting[i]), 0, 0, 16, 16));
         }
 
@@ -105,11 +106,11 @@ public class Blobb extends Sprite {
         jumping_frames.clear();
 
         //Create the animation of Splatting
-        BlobbSplat = new Animation<TextureRegion>(0.1f, splatting_frames);
+        BlobbSplat = new Animation<TextureRegion>(0.05f, splatting_frames);
         splatting_frames.clear();
 
         //Create the animation of Pounding
-        BlobbPound = new Animation<TextureRegion>(0.1f, pounding_frames);
+        BlobbPound = new Animation<TextureRegion>(0.08f, pounding_frames);
         pounding_frames.clear();
 
         //Create the animation of Grabbing
@@ -166,8 +167,10 @@ public class Blobb extends Sprite {
                 break;
             case POUNDING:
                 region = BlobbPound.getKeyFrame(stateTimer, false);
-                if (BlobbPound.isAnimationFinished(stateTimer))
+                if (BlobbPound.isAnimationFinished(stateTimer)) {
                     b2Body.setGravityScale(1);
+                    b2Body.applyLinearImpulse(new Vector2(0, -.3f), b2Body.getWorldCenter(), true);
+                }
                 else {
                     b2Body.setLinearVelocity(0,0);
                     b2Body.setGravityScale(0);
@@ -254,14 +257,25 @@ public class Blobb extends Sprite {
 
         //if pounding
         else if (setToPound) {
-            //if he has landed and the pound is finished, he is now standing
+            //if he has landed and the pound is finished, he is now splatting
             if (b2Body.getGravityScale() == 1 && b2Body.getLinearVelocity().y == 0) {
                 setToPound = false;
-                return State.STANDING;
+                setToSplat = true;
+                return State.SPLATTING;
             }
             //otherwise still pounding
             else
                 return State.POUNDING;
+        }
+
+        else if (setToSplat) {
+            if (BlobbSplat.isAnimationFinished(stateTimer)) {
+                setToSplat = false;
+                return State.STANDING;
+            }
+
+            else
+                return State.SPLATTING;
         }
 
         //default him standing
@@ -299,14 +313,19 @@ public class Blobb extends Sprite {
         setToFloat = true;
     }
 
+    public void startSplat() {
+        setToSplat = true;
+    }
+
     public void clearMovementFlags() {
         setToPound = false;
         setToFloat = false;
+        setToSplat = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        if (setToFloat || setToPound)
+        if (setToFloat || setToPound || setToSplat)
             return true;
         else
             return false;
