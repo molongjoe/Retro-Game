@@ -25,14 +25,14 @@ public class Blobb extends Sprite {
     String[] grabbing = {"Grab-1", "Grab-2", "Grab-3", "Grab-4", "Grab-5", "Grab-6"};
 
     //All the states Blobb can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING
-    }
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING}
 
     //log current state and previous state
     public State currentState;
     public State previousState;
 
-    private World world;
+    public World world;
+    public PlayScreen screen;
     public Body b2Body;
 
     //All sprite Texture Regions and Animations for Blobb
@@ -41,15 +41,15 @@ public class Blobb extends Sprite {
     private Animation<TextureRegion> BlobbJump;
     private Animation<TextureRegion> BlobbSplat;
     private Animation<TextureRegion> BlobbPound;
-    private Animation<TextureRegion> BlobbGround;
+    private Animation<TextureRegion> BlobbGrab;
     private Animation<TextureRegion> BlobbFall;
     private TextureRegion BlobbDead;
 
     //behavioral checks
     private float stateTimer;
     private boolean runningRight;
-
-    private PlayScreen screen;
+    public boolean setToPound = false;
+    public boolean setToFloat = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -106,15 +106,19 @@ public class Blobb extends Sprite {
 
         //Create the animation of Splatting
         BlobbSplat = new Animation<TextureRegion>(0.1f, splatting_frames);
+        splatting_frames.clear();
 
         //Create the animation of Pounding
         BlobbPound = new Animation<TextureRegion>(0.1f, pounding_frames);
+        pounding_frames.clear();
 
         //Create the animation of Grabbing
-        BlobbGround = new Animation<TextureRegion>(0.1f, grabbing_frames);
+        BlobbGrab = new Animation<TextureRegion>(0.1f, grabbing_frames);
+        grabbing_frames.clear();
 
         //Create the animation of Falling
         BlobbFall = new Animation<TextureRegion>(0.1f, falling_frames);
+        falling_frames.clear();
 
         //create texture region for Blobb standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
@@ -139,7 +143,7 @@ public class Blobb extends Sprite {
     private TextureRegion getFrame(float dt) {
         //get Blobbs current state. ie. jumping, running, standing...
         currentState = getState();
-        TextureRegion region;
+        TextureRegion region = BlobbStand;
 
         //depending on the state, get corresponding animation keyFrame.
         switch(currentState) {
@@ -154,18 +158,28 @@ public class Blobb extends Sprite {
                 break;
             case FALLING:
                 region = BlobbFall.getKeyFrame(stateTimer, false);
+                break;
             case STANDING:
+                break;
             case SPLATTING:
                 region = BlobbSplat.getKeyFrame(stateTimer, false);
+                break;
             case POUNDING:
                 region = BlobbPound.getKeyFrame(stateTimer, false);
+                if (BlobbPound.isAnimationFinished(stateTimer))
+                    b2Body.setGravityScale(1);
+                else {
+                    b2Body.setLinearVelocity(0,0);
+                    b2Body.setGravityScale(0);
+                }
+                break;
 
             default:
                 region = BlobbStand;
                 break;
         }
 
-        //if Blobb is running left and the texture isnt facing left... flip it.
+        //if Blobb is running left and the texture isn't facing left... flip it.
         if ((b2Body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
             region.flip(true, false);
             runningRight = false;
@@ -186,32 +200,6 @@ public class Blobb extends Sprite {
 
         //return the final adjusted frame
         return region;
-
-    }
-
-    private State getState(){
-        //Test to Box2D for velocity on the X and Y-Axis
-
-        if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
-            return State.JUMPING;
-        //else if((b2Body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
-            //return State.JUMPING;
-            //if negative in Y-Axis Blobb is falling
-        else if (b2Body.getLinearVelocity().y < 0 )
-            return State.FALLING;
-            //if Blobb is positive or negative in the X axis he is running
-        else if (b2Body.getLinearVelocity().x != 0)
-            return State.RUNNING;
-        //else if (b2Body.getLinearVelocity().y < -3)
-            //return State.POUNDING;
-            //if none of these return then he must be standing
-        else
-            return State.STANDING;
-
-    }
-
-    public float getStateTimer() {
-        return stateTimer;
     }
 
     //Define Blobb in the Box2D world
@@ -225,7 +213,6 @@ public class Blobb extends Sprite {
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(5 / RetroGame.PPM, 5 / RetroGame.PPM);
-
 
         //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
@@ -242,6 +229,87 @@ public class Blobb extends Sprite {
         fdef2.shape = feet;
         fdef2.isSensor = true;
         b2Body.createFixture(fdef2).setUserData("feet");
+    }
+
+    private State getState(){
+
+        //if not doing special action (pounding, floating)
+        if (!specialMovement()) {
+            //if positive in Y-Axis or negative but was jumping, Blobb is jumping
+            if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
+                return State.JUMPING;
+            //if negative in Y-Axis Blobb is falling
+            else if (b2Body.getLinearVelocity().y < 0)
+                return State.FALLING;
+                //if Blobb is positive or negative in the X axis he is running
+            else if (b2Body.getLinearVelocity().x != 0) {
+                return State.RUNNING;
+            }
+            //if none of these return then he must be standing.
+            else {
+                clearMovementFlags();
+                return State.STANDING;
+            }
+        }
+
+        //if pounding
+        else if (setToPound) {
+            //if he has landed and the pound is finished, he is now standing
+            if (b2Body.getGravityScale() == 1 && b2Body.getLinearVelocity().y == 0) {
+                setToPound = false;
+                return State.STANDING;
+            }
+            //otherwise still pounding
+            else
+                return State.POUNDING;
+        }
+
+        //default him standing
+        else
+            return State.STANDING;
+
+
+    }
+
+    public float getStateTimer() {
+        return stateTimer;
+    }
+
+    public void setCurrentState(State newState) {
+        currentState = newState;
+    }
+
+    public void jump() {
+        b2Body.applyLinearImpulse(new Vector2(0, 3.8f), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveLeft() {
+        b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveRight() {
+        b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void startPound() {
+        setToPound = true;
+    }
+
+    public void startFloat() {
+        setToFloat = true;
+    }
+
+    public void clearMovementFlags() {
+        setToPound = false;
+        setToFloat = false;
+    }
+
+    //if no special movement is happening, return false. Otherwise true
+    public boolean specialMovement() {
+        if (setToFloat || setToPound)
+            return true;
+        else
+            return false;
     }
 
     //Draw Blobb's physics body in the world

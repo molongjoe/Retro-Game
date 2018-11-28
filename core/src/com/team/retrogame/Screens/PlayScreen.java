@@ -119,19 +119,25 @@ public class PlayScreen implements Screen {
     private void handleInput(float dt) {
         //control RetroGame using immediate impulses
 
-        //if RetroGame isn't dead, these inputs are valid
+        //if Blobb isn't dead, these inputs are valid
         if(player.currentState != Blobb.State.DEAD) {
-            if(setToResume || !setToPause) {
+            //if game isn't paused and player isn't performing a special action, these inputs are valid
+            if((setToResume || !setToPause) && (!player.specialMovement())){
+                //normal inputs
                 if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.b2Body.getLinearVelocity().y == 0))
-                    player.b2Body.applyLinearImpulse(new Vector2(0, 3.8f), player.b2Body.getWorldCenter(), true);
+                    player.jump();
                 if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2Body.getLinearVelocity().x <= 2)
-                    player.b2Body.applyLinearImpulse(new Vector2(0.08f, 0), player.b2Body.getWorldCenter(), true);
+                    player.moveRight();
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2Body.getLinearVelocity().x >= -2)
-                    player.b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), player.b2Body.getWorldCenter(), true);
-                if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
-                    player.b2Body.applyLinearImpulse(new Vector2(0, -3.7f), player.b2Body.getWorldCenter(), true);
-
+                    player.moveLeft();
+                if (Gdx.input.isKeyJustPressed(Input.Keys.A) && (player.b2Body.getLinearVelocity().y > 0)) {
+                    player.startPound();
+                }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+                    player.startFloat();
+                }
             }
+
 
             //pause and unpause functionality
             if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
