@@ -270,15 +270,15 @@ public class Blobb extends Sprite {
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
             else if (b2Body.getLinearVelocity().x != 0) {
-                if (currentState == State.JUMPING)
-                    RetroGame.manager.get("Bubble sound.mp3",Sound.class).play();
+                //if (currentState == State.JUMPING)
+                    //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.RUNNING;
             }
             //if none of these return then he must be standing.
             else {
                 clearMovementFlags();
-                if (currentState == State.JUMPING)
-                    RetroGame.manager.get("Bubble sound.mp3",Sound.class).play();
+                //if (currentState == State.JUMPING)
+                    //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.STANDING;
             }
         }
@@ -290,6 +290,7 @@ public class Blobb extends Sprite {
             if (b2Body.getGravityScale() == 1 && b2Body.getLinearVelocity().y == 0) {
                 setToPound = false;
                 setToSplat = true;
+                //RetroGame.manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
                 return State.SPLATTING;
             }
             //otherwise still pounding
@@ -329,6 +330,7 @@ public class Blobb extends Sprite {
 
     public void jump() {
         b2Body.applyLinearImpulse(new Vector2(0, 3.3f), b2Body.getWorldCenter(), true);
+        //RetroGame.manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
     }
 
     public void moveLeft() {
@@ -341,6 +343,7 @@ public class Blobb extends Sprite {
 
     public void startPound() {
         setToPound = true;
+        //RetroGame.manager.load("audio/sounds/bubblePound.mp3", Sound.class);
     }
 
     public void startSplat() {
@@ -360,12 +363,18 @@ public class Blobb extends Sprite {
 
     public void startFloat() {
         setToFloat = true;
+        //RetroGame.manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
     }
 
     public void floatCheck() {
         if (!Gdx.input.isKeyPressed(Input.Keys.S) || b2Body.getLinearVelocity().y == 0 || stateTimer > 3) {
             setToFloat = false;
             b2Body.setGravityScale(1);
+            //if (stateTimer > 3)
+                //RetroGame.manager.load("audio/sounds/bubblePop.mp3", Sound.class);
+
+            //else
+                //RetroGame.manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
         }
 
         else {

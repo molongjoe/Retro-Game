@@ -2,6 +2,7 @@ package com.team.retrogame;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.team.retrogame.Screens.PlayScreen;
@@ -49,7 +50,19 @@ public class RetroGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		manager = new AssetManager();
-		manager.load("Bubble sound.mp3", Sound.class);
+		manager.load("audio/music/iwishthiswasundertale.mp3", Music.class);
+		/*
+		manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
+		manager.load("audio/sounds/bubbleLand.mp3", Sound.class);
+		manager.load("audio/sounds/bubblePound.mp3", Sound.class);
+		manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
+		manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
+		manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
+		manager.load("audio/sounds/bubbleFloatPop.mp3", Sound.class);
+		manager.load("audio/sounds/bubbleButtBounce.mp3", Sound.class);
+		manager.load("audio/sounds/bubbleDie.mp3", Sound.class);
+		manager.load("audio/sounds/spring.mp3", Sound.class);
+		*/
 		manager.finishLoading();
 		setScreen(new PlayScreen(this, "module_one.tmx"));
 	}

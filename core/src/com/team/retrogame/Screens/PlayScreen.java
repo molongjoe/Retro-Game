@@ -100,12 +100,10 @@ public class PlayScreen implements Screen {
 
         world.setContactListener(new WorldContactListener());
 
-        /*
-        music = RetroGame.manager.get("audio/music/Blobb_music.ogg", Music.class);
+        music = RetroGame.manager.get("audio/music/iwishthiswasundertale.mp3", Music.class);
         music.setLooping(true);
         music.setVolume(0.3f);
         music.play();
-        */
 
         setToPause = false;
         setToResume = false;
