@@ -208,7 +208,7 @@ public class Blobb extends Sprite {
     //Define Blobb in the Box2D world
     private void defineBlobb() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(64 / RetroGame.PPM, 16 / RetroGame.PPM);
+        bdef.position.set(320 / RetroGame.PPM, 16 / RetroGame.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2Body = world.createBody(bdef);
 

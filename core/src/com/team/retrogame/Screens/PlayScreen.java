@@ -58,6 +58,11 @@ public class PlayScreen implements Screen {
     private boolean setToPause;
     private boolean setToResume;
 
+    int moduleNum = 0;
+    String[] module = {"module_one.tmx", "module_two.tmx", "module_three.tmx", "module_four.tmx", "module_five.tmx", "module_six.tmx"};
+
+
+
     public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
         atlas = new TextureAtlas("AllSprites.atlas");
@@ -208,7 +213,12 @@ public class PlayScreen implements Screen {
         //if a floor is cleared, set the screen to be the new floor (lacks transition)
         if (floorClear()) {
 
-            game.setScreen(new PlayScreen(game, "module_one.tmx"));
+            moduleNum++;
+            if(moduleNum > 1){
+                moduleNum--;
+            }
+
+            game.setScreen(new PlayScreen(game, module[moduleNum]));
             dispose();
         }
 
