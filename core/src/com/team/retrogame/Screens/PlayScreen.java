@@ -58,9 +58,14 @@ public class PlayScreen implements Screen {
     private boolean setToPause;
     private boolean setToResume;
 
-    public PlayScreen(RetroGame game) {
+    int moduleNum = 0;
+    String[] module = {"module_one.tmx", "module_two.tmx", "module_three.tmx", "module_four.tmx", "module_five.tmx", "module_six.tmx"};
+
+
+
+    public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
-        atlas = new TextureAtlas("blobb.pack");
+        atlas = new TextureAtlas("AllSprites.atlas");
 
         this.game = game;
         //create cam used to follow the player through game world
@@ -76,7 +81,7 @@ public class PlayScreen implements Screen {
 
         //Load the map and setup the map renderer
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("sandbox.tmx");
+        map = mapLoader.load(newMap);
         renderer = new OrthogonalTiledMapRenderer(map, 1 / RetroGame.PPM);
 
         //initially set the gamcam to be centered correctly at the start of of map
@@ -107,6 +112,7 @@ public class PlayScreen implements Screen {
     }
 
     public TextureAtlas getAtlas() {
+
         return atlas;
     }
 
@@ -118,16 +124,25 @@ public class PlayScreen implements Screen {
     private void handleInput(float dt) {
         //control RetroGame using immediate impulses
 
-        //if RetroGame isn't dead, these inputs are valid
+        //if Blobb isn't dead, these inputs are valid
         if(player.currentState != Blobb.State.DEAD) {
-            if(setToResume || !setToPause) {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.UP))
-                    player.b2Body.applyLinearImpulse(new Vector2(0, 4f), player.b2Body.getWorldCenter(), true);
+            //if game isn't paused and player isn't performing a special action, these inputs are valid
+            if((setToResume || !setToPause) && (!player.specialMovement())){
+                //normal inputs
+                if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.b2Body.getLinearVelocity().y == 0))
+                    player.jump();
                 if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2Body.getLinearVelocity().x <= 2)
-                    player.b2Body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2Body.getWorldCenter(), true);
+                    player.moveRight();
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2Body.getLinearVelocity().x >= -2)
-                    player.b2Body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2Body.getWorldCenter(), true);
+                    player.moveLeft();
+                if (Gdx.input.isKeyJustPressed(Input.Keys.A) && (player.b2Body.getLinearVelocity().y != 0)) {
+                    player.startPound();
+                }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+                    player.startFloat();
+                }
             }
+
 
             //pause and unpause functionality
             if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
@@ -151,9 +166,10 @@ public class PlayScreen implements Screen {
 
             player.update(dt);
 
-            //attach the gamecam to our players.x coordinate
+            //attach the gamecam to the world
             if (player.currentState != Blobb.State.DEAD) {
-                gamecam.position.x = player.b2Body.getPosition().x;
+                gamecam.position.x = gamePort.getWorldWidth()/2;
+                gamecam.position.y = gamePort.getWorldHeight()/2;
             }
 
             //update the gamecam with correct coordinates after changes
@@ -178,7 +194,7 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         //render the Box2DDebugLines
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
@@ -194,6 +210,18 @@ public class PlayScreen implements Screen {
             dispose();
         }
 
+        //if a floor is cleared, set the screen to be the new floor (lacks transition)
+        if (floorClear()) {
+
+            moduleNum++;
+            if(moduleNum > 1){
+                moduleNum--;
+            }
+
+            game.setScreen(new PlayScreen(game, module[moduleNum]));
+            dispose();
+        }
+
         if (setToPause) {
             pause.stage.draw();
         }
@@ -205,6 +233,15 @@ public class PlayScreen implements Screen {
 
     private boolean gameOver() {
         if(player.currentState == Blobb.State.DEAD && player.getStateTimer() > 3) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean floorClear() {
+        //if player has reached the top of the floor, the module is complete
+        if ((player.getY() > RetroGame.V_HEIGHT/RetroGame.PPM) &&
+                ((player.currentState == Blobb.State.STANDING) || (player.currentState == Blobb.State.RUNNING))) {
             return true;
         }
         return false;
