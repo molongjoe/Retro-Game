@@ -27,8 +27,12 @@ public class RetroGame extends Game {
 	will yield a unique number (6 in this case), and appropriate code can follow
 	 */
 	public static final short NOTHING_BIT = 0;
-	public static final short GROUND_BIT = 1;
+    public static final short GROUND_BIT = 1;
 	public static final short BLOBB_BIT = 2;
+	public static final short WALL_BIT = 4;
+	public static final short SPIKE_BIT = 8;
+	public static final short TRAMPOLINE_BIT = 16;
+	public static final short ONE_WAY_WALL_BIT = 32;
 
 	//Universal SpriteBatch. All sprites contained, and passed around by this one instance
 	public SpriteBatch batch;

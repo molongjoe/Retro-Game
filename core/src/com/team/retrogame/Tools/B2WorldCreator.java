@@ -40,6 +40,8 @@ public class B2WorldCreator {
         drawn at the map coordinates and given a physics body. This method is used for each type of
         Object.
          */
+
+        //Create Ground Fixtures
         for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
@@ -50,6 +52,37 @@ public class B2WorldCreator {
 
             shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
             fdef.shape = shape;
+            fdef.filter.categoryBits = RetroGame.GROUND_BIT;
+            body.createFixture(fdef);
+        }
+
+        //Create Wall Fixtures
+        for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / RetroGame.PPM, (rect.getY() + rect.getHeight() / 2) / RetroGame.PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
+            fdef.shape = shape;
+            fdef.filter.categoryBits = RetroGame.WALL_BIT;
+            body.createFixture(fdef);
+        }
+
+        //Create Spike Fixtures
+        for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / RetroGame.PPM, (rect.getY() + rect.getHeight() / 2) / RetroGame.PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
+            fdef.shape = shape;
+            fdef.filter.categoryBits = RetroGame.SPIKE_BIT;
             body.createFixture(fdef);
         }
     }
