@@ -1,5 +1,7 @@
 package com.team.retrogame.Sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -26,7 +28,7 @@ public class Blobb extends Sprite {
     String[] floating = {"Floating-1","Floating-2","Floating-3","Floating-4"};
 
     //All the states Blobb can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING}
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING}
 
     //log current state and previous state
     public State currentState;
@@ -50,9 +52,14 @@ public class Blobb extends Sprite {
     //behavioral checks
     private float stateTimer;
     private boolean runningRight;
+    public boolean touchingWall;
+
     public boolean setToPound = false;
     public boolean setToFloat = false;
     public boolean setToSplat = false;
+    public boolean setToGrab = false;
+
+
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -159,6 +166,8 @@ public class Blobb extends Sprite {
 
         //depending on the state, get corresponding animation keyFrame.
         switch(currentState) {
+            case STANDING:
+                break;
             case DEAD:
                 region = BlobbDead;
                 break;
@@ -171,24 +180,20 @@ public class Blobb extends Sprite {
             case FALLING:
                 region = BlobbFall.getKeyFrame(stateTimer, false);
                 break;
-            case STANDING:
+            case POUNDING:
+                region = BlobbPound.getKeyFrame(stateTimer, false);
+                poundCheck();
                 break;
             case SPLATTING:
                 region = BlobbSplat.getKeyFrame(stateTimer, false);
                 break;
-
             case FLOATING:
                 region = BlobbFloat.getKeyFrame(stateTimer, false);
-            case POUNDING:
-                region = BlobbPound.getKeyFrame(stateTimer, false);
-                if (BlobbPound.isAnimationFinished(stateTimer)) {
-                    b2Body.setGravityScale(1);
-                    b2Body.applyLinearImpulse(new Vector2(0, -.3f), b2Body.getWorldCenter(), true);
-                }
-                else {
-                    b2Body.setLinearVelocity(0,0);
-                    b2Body.setGravityScale(0);
-                }
+                floatCheck();
+                break;
+            case GRABBING:
+                region = BlobbGrab.getKeyFrame(stateTimer, false);
+                grabCheck();
                 break;
 
             default:
@@ -288,16 +293,21 @@ public class Blobb extends Sprite {
                 setToSplat = false;
                 return State.STANDING;
             }
-
             else
                 return State.SPLATTING;
+        }
+
+        else if (setToFloat) {
+            return State.FLOATING;
+        }
+
+        else if (setToGrab) {
+            return State.GRABBING;
         }
 
         //default him standing
         else
             return State.STANDING;
-
-
     }
 
     public float getStateTimer() {
@@ -324,23 +334,60 @@ public class Blobb extends Sprite {
         setToPound = true;
     }
 
+    public void startSplat() {
+        setToSplat = true;
+    }
+
+    public void poundCheck() {
+        if (BlobbPound.isAnimationFinished(stateTimer)) {
+            b2Body.setGravityScale(1);
+            b2Body.applyLinearImpulse(new Vector2(0, -.3f), b2Body.getWorldCenter(), true);
+        }
+        else {
+            b2Body.setLinearVelocity(0,0);
+            b2Body.setGravityScale(0);
+        }
+    }
+
     public void startFloat() {
         setToFloat = true;
     }
 
-    public void startSplat() {
-        setToSplat = true;
+    public void floatCheck() {
+        if (!Gdx.input.isKeyPressed(Input.Keys.S) || b2Body.getLinearVelocity().y == 0) {
+            setToFloat = false;
+            b2Body.setGravityScale(1);
+        }
+
+        else {
+            b2Body.setGravityScale(-0.1f);
+        }
+    }
+
+    public void startGrab() {
+        setToGrab = true;
+    }
+
+    public void grabCheck() {
+        if (!Gdx.input.isKeyPressed(Input.Keys.D) || !touchingWall) {
+            setToGrab = false;
+            b2Body.setGravityScale(1);
+        }
+
+        else
+            b2Body.setGravityScale(0);
     }
 
     public void clearMovementFlags() {
         setToPound = false;
         setToFloat = false;
         setToSplat = false;
+        setToGrab = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        if (setToFloat || setToPound || setToSplat)
+        if (setToFloat || setToPound || setToSplat || setToGrab)
             return true;
         else
             return false;

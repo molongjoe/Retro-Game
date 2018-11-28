@@ -127,7 +127,7 @@ public class PlayScreen implements Screen {
         //if Blobb isn't dead, these inputs are valid
         if(player.currentState != Blobb.State.DEAD) {
             //if game isn't paused and player isn't performing a special action, these inputs are valid
-            if((setToResume || !setToPause) && (!player.specialMovement())){
+            if((setToResume || !setToPause) && (!player.specialMovement() || player.setToFloat)){
                 //normal inputs
                 if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.b2Body.getLinearVelocity().y == 0))
                     player.jump();
@@ -138,8 +138,11 @@ public class PlayScreen implements Screen {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.A) && (player.b2Body.getLinearVelocity().y != 0)) {
                     player.startPound();
                 }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.S) && (player.b2Body.getLinearVelocity().y != 0)) {
                     player.startFloat();
+                }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.D) && (player.b2Body.getLinearVelocity().y != 0)) {
+                    player.startGrab();
                 }
             }
 
