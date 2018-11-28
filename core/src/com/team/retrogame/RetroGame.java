@@ -45,7 +45,7 @@ public class RetroGame extends Game {
 		batch = new SpriteBatch();
 		manager = new AssetManager();
 		manager.finishLoading();
-		setScreen(new PlayScreen(this, "module_four.tmx"));
+		setScreen(new PlayScreen(this, "module_one.tmx"));
 	}
 
 	//dispose of resources
