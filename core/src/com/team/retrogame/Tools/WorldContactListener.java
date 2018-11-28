@@ -35,13 +35,40 @@ public class WorldContactListener implements ContactListener {
          If the first object is fixture A, then the second is assumed to be B, and vice versa.
          The resulting method is then acted upon the appropriate object.
          */
-       
-
+        switch (cdef) {
+            case RetroGame.BLOBB_BIT | RetroGame.WALL_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+                    ((Blobb) fixA.getUserData()).touchingWall = true;
+                else
+                    ((Blobb) fixB.getUserData()).touchingWall = true;
+                break;
+        }
     }
 
-    //unused methods currently
+
     @Override
     public void endContact(Contact contact) {
+        //A Collision has finished. Identify the proponents
+        Fixture fixA = contact.getFixtureA();
+        Fixture fixB = contact.getFixtureB();
+
+        //Do a bitwise operation to determine the unique collision ending (more in the RetroGame class)
+        int cdef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
+
+        /*
+         This block of code is to determine what two objects have finished colliding, which object
+         is fixture A, and which object is fixture B.
+         If the first object is fixture A, then the second is assumed to be B, and vice versa.
+         The resulting method is then acted upon the appropriate object.
+         */
+        switch (cdef) {
+            case RetroGame.BLOBB_BIT | RetroGame.WALL_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+                    ((Blobb) fixA.getUserData()).touchingWall = false;
+                else
+                    ((Blobb) fixB.getUserData()).touchingWall = false;
+                break;
+        }
 
     }
 

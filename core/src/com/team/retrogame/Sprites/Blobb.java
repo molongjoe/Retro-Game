@@ -163,6 +163,7 @@ public class Blobb extends Sprite {
         //get Blobbs current state. ie. jumping, running, standing...
         currentState = getState();
         TextureRegion region = BlobbStand;
+        System.out.println(touchingWall);
 
         //depending on the state, get corresponding animation keyFrame.
         switch(currentState) {
@@ -238,7 +239,11 @@ public class Blobb extends Sprite {
 
         //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
-        fdef.filter.maskBits = RetroGame.GROUND_BIT;
+        fdef.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.ONE_WAY_WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT;
 
         fdef.shape = shape;
         //fdef.friction = (float)0.5;
@@ -374,8 +379,10 @@ public class Blobb extends Sprite {
             b2Body.setGravityScale(1);
         }
 
-        else
+        else {
+            b2Body.setLinearVelocity(0,0);
             b2Body.setGravityScale(0);
+        }
     }
 
     public void clearMovementFlags() {
