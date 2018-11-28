@@ -2,6 +2,7 @@ package com.team.retrogame;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.team.retrogame.Screens.PlayScreen;
 
@@ -38,7 +39,7 @@ public class RetroGame extends Game {
 	public SpriteBatch batch;
 
 	//Universal AssetManager. All assets contained, and passed around by this one instance
-	private static AssetManager manager;
+	public static AssetManager manager;
 
 	/*
 	Create SpriteBatch and AssetManager. Load manager with sounds and music. Set Beginning
@@ -48,6 +49,7 @@ public class RetroGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		manager = new AssetManager();
+		manager.load("Bubble sound.mp3", Sound.class);
 		manager.finishLoading();
 		setScreen(new PlayScreen(this, "module_one.tmx"));
 	}

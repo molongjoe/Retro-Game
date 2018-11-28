@@ -2,6 +2,7 @@ package com.team.retrogame.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -269,11 +270,15 @@ public class Blobb extends Sprite {
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
             else if (b2Body.getLinearVelocity().x != 0) {
+                if (currentState == State.JUMPING)
+                    RetroGame.manager.get("Bubble sound.mp3",Sound.class).play();
                 return State.RUNNING;
             }
             //if none of these return then he must be standing.
             else {
                 clearMovementFlags();
+                if (currentState == State.JUMPING)
+                    RetroGame.manager.get("Bubble sound.mp3",Sound.class).play();
                 return State.STANDING;
             }
         }
