@@ -42,6 +42,13 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).touchingWall = true;
                 break;
+
+            case RetroGame.BLOBB_BIT | RetroGame.SPIKE_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+                    ((Blobb) fixA.getUserData()).die();
+                else
+                    ((Blobb) fixB.getUserData()).die();
+                break;
         }
     }
 

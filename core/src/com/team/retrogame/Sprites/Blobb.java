@@ -163,7 +163,6 @@ public class Blobb extends Sprite {
         //get Blobbs current state. ie. jumping, running, standing...
         currentState = getState();
         TextureRegion region = BlobbStand;
-        System.out.println(touchingWall);
 
         //depending on the state, get corresponding animation keyFrame.
         switch(currentState) {
@@ -398,6 +397,10 @@ public class Blobb extends Sprite {
             return true;
         else
             return false;
+    }
+
+    public void die() {
+        System.out.println("You just died you stupid idiot");
     }
 
     //Draw Blobb's physics body in the world
