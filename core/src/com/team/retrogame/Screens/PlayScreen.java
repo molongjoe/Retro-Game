@@ -228,14 +228,14 @@ public class PlayScreen implements Screen {
     public void pause() {
         setToPause = true;
         setToResume = false;
-        music.pause();
+        //music.pause();
     }
 
     @Override
     public void resume() {
         setToResume = true;
         setToPause = false;
-        music.play();
+        //music.play();
     }
 
     @Override
