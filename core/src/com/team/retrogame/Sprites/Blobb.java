@@ -323,7 +323,7 @@ public class Blobb extends Sprite {
     }
 
     public void jump() {
-        b2Body.applyLinearImpulse(new Vector2(0, 3.8f), b2Body.getWorldCenter(), true);
+        b2Body.applyLinearImpulse(new Vector2(0, 3.3f), b2Body.getWorldCenter(), true);
     }
 
     public void moveLeft() {
@@ -358,13 +358,14 @@ public class Blobb extends Sprite {
     }
 
     public void floatCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.S) || b2Body.getLinearVelocity().y == 0) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.S) || b2Body.getLinearVelocity().y == 0 || stateTimer > 3) {
             setToFloat = false;
             b2Body.setGravityScale(1);
         }
 
         else {
-            b2Body.setGravityScale(-0.1f);
+            b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
+            b2Body.setGravityScale(-1f);
         }
     }
 
