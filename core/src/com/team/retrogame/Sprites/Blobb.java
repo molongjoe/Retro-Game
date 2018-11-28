@@ -23,9 +23,10 @@ public class Blobb extends Sprite {
     String[] splatting = {"Splat-1", "Splat-2", "Splat-3","Splat-4", "Splat-3", "Splat-2"};
     String[] pounding = {"Pound-1", "Pound-2", "Pound-3"};
     String[] grabbing = {"Grab-1", "Grab-2", "Grab-3", "Grab-4", "Grab-5", "Grab-6"};
+    String[] floating = {"Floating-1","Floating-2","Floating-3","Floating-4"};
 
     //All the states Blobb can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING}
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING}
 
     //log current state and previous state
     public State currentState;
@@ -43,6 +44,7 @@ public class Blobb extends Sprite {
     private Animation<TextureRegion> BlobbPound;
     private Animation<TextureRegion> BlobbGrab;
     private Animation<TextureRegion> BlobbFall;
+    private Animation<TextureRegion> BlobbFloat;
     private TextureRegion BlobbDead;
 
     //behavioral checks
@@ -69,6 +71,7 @@ public class Blobb extends Sprite {
         Array<TextureRegion> pounding_frames = new Array<TextureRegion>();
         Array<TextureRegion> grabbing_frames = new Array<TextureRegion>();
         Array<TextureRegion> falling_frames = new Array<TextureRegion>();
+        Array<TextureRegion> floating_frames = new Array<TextureRegion>();
 
         //Add the different running sprites to our running frames
         for(int i = 0; i <= 7; i++) {
@@ -96,6 +99,10 @@ public class Blobb extends Sprite {
             falling_frames.add(new TextureRegion(screen.getAtlas().findRegion(jumping[i]), 0, 0, 16, 16));
         }
 
+        for(int i = 0; i <= 3; i++){
+            floating_frames.add(new TextureRegion(screen.getAtlas().findRegion(floating[i]), 0, 0, 16, 16));
+        }
+
 
         //Create the animation of Running
         BlobbRun = new Animation<TextureRegion>(0.1f, running_frames);
@@ -120,6 +127,10 @@ public class Blobb extends Sprite {
         //Create the animation of Falling
         BlobbFall = new Animation<TextureRegion>(0.1f, falling_frames);
         falling_frames.clear();
+
+        //Create the animation of Floating
+        BlobbFloat = new Animation<TextureRegion>(0.1f, floating_frames);
+        floating_frames.clear();
 
         //create texture region for Blobb standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
@@ -165,6 +176,9 @@ public class Blobb extends Sprite {
             case SPLATTING:
                 region = BlobbSplat.getKeyFrame(stateTimer, false);
                 break;
+
+            case FLOATING:
+                region = BlobbFloat.getKeyFrame(stateTimer, false);
             case POUNDING:
                 region = BlobbPound.getKeyFrame(stateTimer, false);
                 if (BlobbPound.isAnimationFinished(stateTimer)) {
@@ -254,6 +268,7 @@ public class Blobb extends Sprite {
                 return State.STANDING;
             }
         }
+
 
         //if pounding
         else if (setToPound) {
