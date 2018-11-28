@@ -135,7 +135,7 @@ public class PlayScreen implements Screen {
                     player.moveRight();
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2Body.getLinearVelocity().x >= -2)
                     player.moveLeft();
-                if (Gdx.input.isKeyJustPressed(Input.Keys.A) && (player.b2Body.getLinearVelocity().y > 0)) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.A) && (player.b2Body.getLinearVelocity().y != 0)) {
                     player.startPound();
                 }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
