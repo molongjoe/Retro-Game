@@ -56,6 +56,8 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
 
+        /*
+
         //Create Wall Fixtures
         for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
@@ -85,5 +87,6 @@ public class B2WorldCreator {
             fdef.filter.categoryBits = RetroGame.SPIKE_BIT;
             body.createFixture(fdef);
         }
+        */
     }
 }
