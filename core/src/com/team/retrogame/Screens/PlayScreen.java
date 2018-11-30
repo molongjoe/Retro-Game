@@ -144,6 +144,16 @@ public class PlayScreen implements Screen {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.D) && (player.b2Body.getLinearVelocity().y != 0)) {
                     player.startGrab();
                 }
+                // Detect D just released
+                if (!Gdx.input.isKeyPressed(Input.Keys.D) && (player.currentState == Blobb.State.GRABBING)) {
+                    if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
+                    Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                        // Trying to walljump
+                        player.wallJump();
+                    } else {
+                        // TODO: grabCheck takes care of beginning to fall. Make this all one if clause.
+                    }
+                }
             }
 
 
