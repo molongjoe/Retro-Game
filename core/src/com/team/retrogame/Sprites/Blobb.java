@@ -260,8 +260,8 @@ public class Blobb extends Sprite {
 
     private State getState(){
 
-        //if not doing special action (pounding, floating)
-        if (!specialMovement()) {
+        //if not doing special action (pounding, floating, wall-jumping)
+        if (!specialMovement()) { // TODO: put wall jumping in specialMovement()
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
             if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
                 return State.JUMPING;
@@ -297,6 +297,8 @@ public class Blobb extends Sprite {
             else
                 return State.POUNDING;
         }
+        // TODO: State walljumping
+        // TODO: setToWallJump
 
         else if (setToSplat) {
             if (BlobbSplat.isAnimationFinished(stateTimer)) {
@@ -307,6 +309,12 @@ public class Blobb extends Sprite {
                 return State.SPLATTING;
         }
 
+        /*
+        else if (setToWallJump) {
+            setToWallJumping = false;
+            return State.JUMPING
+        }
+         */
         else if (setToFloat) {
             return State.FLOATING;
         }
@@ -339,6 +347,12 @@ public class Blobb extends Sprite {
 
     public void moveRight() {
         b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void wallJump() {
+        // TODO: Jump Logic -- get direction facing and apply angular impulse in opposite direction
+//        b2Body.applyAngularImpulse();
+        jump();
     }
 
     public void startPound() {
