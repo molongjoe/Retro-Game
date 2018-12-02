@@ -29,7 +29,8 @@ public class Blobb extends Sprite {
     String[] floating = {"Floating-1","Floating-2","Floating-3","Floating-4"};
 
     //All the states Blobb can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING}
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING,
+        SLIDING_S /* State used to develop sliding behavior */}
 
     //log current state and previous state
     public State currentState;
@@ -59,8 +60,7 @@ public class Blobb extends Sprite {
     public boolean setToFloat = false;
     public boolean setToSplat = false;
     public boolean setToGrab = false;
-
-
+    public boolean setToSlide = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -196,6 +196,9 @@ public class Blobb extends Sprite {
                 region = BlobbGrab.getKeyFrame(stateTimer, false);
                 grabCheck();
                 break;
+            case SLIDING_S:
+                // handle sliding animation here
+                break;
 
             default:
                 region = BlobbStand;
@@ -261,7 +264,7 @@ public class Blobb extends Sprite {
     private State getState(){
 
         //if not doing special action (pounding, floating, wall-jumping)
-        if (!specialMovement()) { // TODO: put wall jumping in specialMovement()
+        if (!specialMovement()) {
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
             if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
                 return State.JUMPING;
@@ -281,7 +284,7 @@ public class Blobb extends Sprite {
                     RetroGame.manager.get("Bubble sound.mp3",Sound.class).play();
                 return State.STANDING;
             }
-        }
+        } // end if not special movement
 
 
         //if pounding
@@ -308,22 +311,28 @@ public class Blobb extends Sprite {
                 return State.SPLATTING;
         }
 
-        /*
-        else if (setToWallJump) {
-            setToWallJumping = false;
-            return State.JUMPING
-        }
-         */
         else if (setToFloat) {
             return State.FLOATING;
+        }
+
+        else if (setToSlide && b2Body.getLinearVelocity().y < 0) {
+            return State.SLIDING_S;
         }
 
         else if (setToGrab) {
             return State.GRABBING;
         }
 
+//        else if (b2Body.getLinearVelocity().y < 0) {
+//            return State.SLIDING_S
+//        }
+
         //default him standing
         else
+            setToGrab = false;
+            setToSlide = false;
+            setToFloat = false;
+            // TODO: make sure these don't break logic, then set state variables in correct method.
             return State.STANDING;
     }
 
@@ -372,6 +381,19 @@ public class Blobb extends Sprite {
         }
     }
 
+    public void slide() {
+        System.err.println("slide() method called");
+        setToGrab = false;
+        setToSlide = true;
+        b2Body.setLinearVelocity(0, -0.5f);
+    }
+
+    public void slideCheck() {
+        if (!Gdx.input.isKeyPressed(Input.Keys.DOWN) || !touchingWall) {
+            setToSlide = false;
+        }
+    }
+
     public void startFloat() {
         setToFloat = true;
     }
@@ -413,7 +435,7 @@ public class Blobb extends Sprite {
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        if (setToFloat || setToPound || setToSplat || setToGrab)
+        if (setToFloat || setToPound || setToSplat /* SGJ-DEV|| setToGrab */)
             return true;
         else
             return false;

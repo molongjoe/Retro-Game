@@ -129,32 +129,42 @@ public class PlayScreen implements Screen {
             //if game isn't paused and player isn't performing a special action, these inputs are valid
             if((setToResume || !setToPause) && (!player.specialMovement() || player.setToFloat)){
                 //normal inputs
-                if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.b2Body.getLinearVelocity().y == 0))
+                if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.b2Body.getLinearVelocity().y == 0)
+                    && !player.setToFloat)
                     player.jump();
                 if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2Body.getLinearVelocity().x <= 2)
                     player.moveRight();
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2Body.getLinearVelocity().x >= -2)
                     player.moveLeft();
+
                 if (Gdx.input.isKeyJustPressed(Input.Keys.A) && (player.b2Body.getLinearVelocity().y != 0)) {
                     player.startPound();
                 }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.S) && (player.b2Body.getLinearVelocity().y != 0)) {
                     player.startFloat();
                 }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.D) && (player.b2Body.getLinearVelocity().y != 0)) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.D) && (player.b2Body.getLinearVelocity().y != 0) &&
+                    !player.setToSlide) {
                     player.startGrab();
                 }
                 // Detect D just released
                 if (!Gdx.input.isKeyPressed(Input.Keys.D) && (player.currentState == Blobb.State.GRABBING)) {
                     if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
-                    Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                    Gdx.input.isKeyPressed(Input.Keys.UP)) {
                         // Trying to walljump
                         player.wallJump();
-                    } else {
-                        // TODO: grabCheck takes care of beginning to fall. Make this all one if clause.
+                    }
+                    player.setToSlide = false;
+                }
+                // Slding
+                if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+                    // Keep inner block for readability in case other behaviors use down key.
+                    if( player.setToSlide || player.currentState == Blobb.State.GRABBING ){
+                        player.slide();
                     }
                 }
-            }
+            } // End if normal movement.
+
 
 
             //pause and unpause functionality
