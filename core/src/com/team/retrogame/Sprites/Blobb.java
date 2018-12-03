@@ -245,10 +245,11 @@ public class Blobb extends Sprite {
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
         fdef.filter.maskBits = RetroGame.GROUND_BIT |
                 RetroGame.WALL_BIT |
-                RetroGame.ONE_WAY_WALL_BIT |
                 RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT;
-
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
         fdef.shape = shape;
         //fdef.friction = (float)0.5;
         b2Body.createFixture(fdef).setUserData(this);
@@ -362,6 +363,13 @@ public class Blobb extends Sprite {
         // TODO: Jump Logic -- get direction facing and apply angular impulse in opposite direction
 //        b2Body.applyAngularImpulse();
         jump();
+    }
+
+    public void bounce() {
+        if (b2Body.getLinearVelocity().y < 0) {
+            b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
+            b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
+        }
     }
 
     public void startPound() {

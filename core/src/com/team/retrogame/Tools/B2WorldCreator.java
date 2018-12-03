@@ -50,13 +50,11 @@ public class B2WorldCreator {
 
             body = world.createBody(bdef);
 
-            shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
+            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
             fdef.shape = shape;
             fdef.filter.categoryBits = RetroGame.GROUND_BIT;
             body.createFixture(fdef);
         }
-
-        /*
 
         //Create Wall Fixtures
         for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
@@ -67,7 +65,7 @@ public class B2WorldCreator {
 
             body = world.createBody(bdef);
 
-            shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
+            shape.setAsBox((rect.getWidth() / 2f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
             fdef.shape = shape;
             fdef.filter.categoryBits = RetroGame.WALL_BIT;
             body.createFixture(fdef);
@@ -82,11 +80,70 @@ public class B2WorldCreator {
 
             body = world.createBody(bdef);
 
-            shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
+            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
             fdef.shape = shape;
             fdef.filter.categoryBits = RetroGame.SPIKE_BIT;
             body.createFixture(fdef);
         }
-        */
+
+        //Create Trampoline Fixtures
+        for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / RetroGame.PPM, (rect.getY() + rect.getHeight() / 2) / RetroGame.PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2f) / RetroGame.PPM);
+            fdef.shape = shape;
+            fdef.filter.categoryBits = RetroGame.TRAMPOLINE_BIT;
+            body.createFixture(fdef);
+        }
+
+        //Create One Way Platform Fixtures
+        for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / RetroGame.PPM, (rect.getY() + rect.getHeight() / 2) / RetroGame.PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
+            fdef.shape = shape;
+            fdef.filter.categoryBits = RetroGame.ONE_WAY_PLATFORM_BIT;
+            body.createFixture(fdef);
+        }
+
+        //Create Crumble Platform Fixtures
+        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / RetroGame.PPM, (rect.getY() + rect.getHeight() / 2) / RetroGame.PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
+            fdef.shape = shape;
+            fdef.filter.categoryBits = RetroGame.CRUMBLE_PLATFORM_BIT;
+            body.createFixture(fdef);
+        }
+
+        //Create Crumble Platform Fixtures
+        for (MapObject object : map.getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / RetroGame.PPM, (rect.getY() + rect.getHeight() / 2) / RetroGame.PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
+            fdef.shape = shape;
+            fdef.filter.categoryBits = RetroGame.GOAL_BIT;
+            body.createFixture(fdef);
+        }
     }
 }
