@@ -21,6 +21,7 @@ import com.team.retrogame.Sprites.Blobb;
 import com.team.retrogame.Tools.B2WorldCreator;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
+import java.util.*;
 
 /**
  * created by Ben Mankin on 09/13/18.
@@ -58,8 +59,21 @@ public class PlayScreen implements Screen {
     private boolean setToPause;
     private boolean setToResume;
 
-    int moduleNum = 0;
-    String[] module = {"module_one.tmx", "module_two.tmx", "module_three.tmx", "module_four.tmx", "module_five.tmx", "module_six.tmx"};
+    //modules/module utilities
+    private Random rand = new Random();
+    private int moduleNum = 0;
+    //String[] module = {"module_one.tmx", "module_two.tmx", "module_three.tmx", "module_four.tmx", "module_five.tmx", "module_six.tmx"};
+    private LinkedList<String> levelModules = new LinkedList<String>(){
+        {
+            add("module_one.tmx");
+            add("module_two.tmx");
+            add("module_three.tmx");
+            add("module_four.tmx");
+            add("module_five.tmx");
+            add("module_six.tmx");
+        }
+    };
+
 
 
 
@@ -214,12 +228,9 @@ public class PlayScreen implements Screen {
         //if a floor is cleared, set the screen to be the new floor (lacks transition)
         if (floorClear()) {
 
-            moduleNum++;
-            if(moduleNum > 1){
-                moduleNum--;
-            }
+            moduleNum = rand.nextInt(levelModules.size());
 
-            game.setScreen(new PlayScreen(game, module[moduleNum]));
+            game.setScreen(new PlayScreen(game, levelModules.remove(moduleNum)));
             dispose();
         }
 
