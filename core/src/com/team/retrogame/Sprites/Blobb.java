@@ -329,10 +329,6 @@ public class Blobb extends Sprite {
 
         //default him standing
         else
-            setToGrab = false;
-            setToSlide = false;
-            setToFloat = false;
-            // TODO: make sure these don't break logic, then set state variables in correct method.
             return State.STANDING;
     }
 
@@ -411,6 +407,7 @@ public class Blobb extends Sprite {
     }
 
     public void startGrab() {
+        System.err.println("Starting grab");
         setToGrab = true;
     }
 
@@ -418,6 +415,7 @@ public class Blobb extends Sprite {
         if (!Gdx.input.isKeyPressed(Input.Keys.D) || !touchingWall) {
             setToGrab = false;
             b2Body.setGravityScale(1);
+            System.out.println("Ending Grab");
         }
 
         else {
@@ -431,11 +429,12 @@ public class Blobb extends Sprite {
         setToFloat = false;
         setToSplat = false;
         setToGrab = false;
+        setToSlide = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        if (setToFloat || setToPound || setToSplat /* SGJ-DEV|| setToGrab */)
+        if (setToFloat || setToPound || setToSplat || setToGrab )
             return true;
         else
             return false;
