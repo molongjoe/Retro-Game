@@ -198,6 +198,7 @@ public class Blobb extends Sprite {
                 break;
             case SLIDING_S:
                 // handle sliding animation here
+                slideCheck();
                 break;
 
             default:
@@ -269,7 +270,7 @@ public class Blobb extends Sprite {
             if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
                 return State.JUMPING;
             //if negative in Y-Axis Blobb is falling
-            else if (b2Body.getLinearVelocity().y < 0)
+            else if (b2Body.getLinearVelocity().y < 0) // TODO: create setToFall flag to force falling even after no jump
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
             else if (b2Body.getLinearVelocity().x != 0) {
@@ -315,7 +316,7 @@ public class Blobb extends Sprite {
             return State.FLOATING;
         }
 
-        else if (setToSlide && b2Body.getLinearVelocity().y < 0) {
+        else if (setToSlide) {
             return State.SLIDING_S;
         }
 
@@ -328,8 +329,11 @@ public class Blobb extends Sprite {
 //        }
 
         //default him standing
-        else
+        else {
+            System.err.println("Back to standing");
+            clearMovementFlags();
             return State.STANDING;
+        }
     }
 
     public float getStateTimer() {
@@ -377,16 +381,18 @@ public class Blobb extends Sprite {
         }
     }
 
-    public void slide() {
-        System.err.println("slide() method called");
-        setToGrab = false;
+    public void startSlide() {
+        System.err.println("startSlide() method called");
         setToSlide = true;
-        b2Body.setLinearVelocity(0, -0.5f);
     }
 
     public void slideCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.DOWN) || !touchingWall) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             setToSlide = false;
+            System.err.println("slideCheck just failed");
+            b2Body.setGravityScale(1);
+        } else {
+            b2Body.setLinearVelocity(0, -0.5f);
         }
     }
 
@@ -416,6 +422,9 @@ public class Blobb extends Sprite {
             setToGrab = false;
             b2Body.setGravityScale(1);
             System.out.println("Ending Grab");
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            setToSlide = true;
+            setToGrab = false;
         }
 
         else {
