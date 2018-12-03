@@ -30,11 +30,15 @@ public class RetroGame extends Game {
 	 */
 	public static final short NOTHING_BIT = 0;
     public static final short GROUND_BIT = 1;
-	public static final short BLOBB_BIT = 2;
-	public static final short WALL_BIT = 4;
+	public static final short WALL_BIT = 2;
+	public static final short BLOBB_BIT = 4;
 	public static final short SPIKE_BIT = 8;
 	public static final short TRAMPOLINE_BIT = 16;
-	public static final short ONE_WAY_WALL_BIT = 32;
+	public static final short ONE_WAY_PLATFORM_BIT = 32;
+	public static final short CRUMBLE_PLATFORM_BIT = 64;
+	public static final short GOAL_BIT = 128;
+
+
 
 	//Universal SpriteBatch. All sprites contained, and passed around by this one instance
 	public SpriteBatch batch;
@@ -64,7 +68,7 @@ public class RetroGame extends Game {
 		manager.load("audio/sounds/spring.mp3", Sound.class);
 		*/
 		manager.finishLoading();
-		setScreen(new PlayScreen(this, "module_one.tmx"));
+		setScreen(new PlayScreen(this, "tiled/module_two.tmx"));
 	}
 
 	//dispose of resources
