@@ -342,6 +342,13 @@ public class Blobb extends Sprite {
         b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
+    public void bounce() {
+        if (b2Body.getLinearVelocity().y < 0) {
+            b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
+            b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
+        }
+    }
+
     public void startPound() {
         setToPound = true;
         //RetroGame.manager.load("audio/sounds/bubblePound.mp3", Sound.class);

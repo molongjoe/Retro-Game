@@ -65,7 +65,7 @@ public class B2WorldCreator {
 
             body = world.createBody(bdef);
 
-            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
+            shape.setAsBox((rect.getWidth() / 2f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
             fdef.shape = shape;
             fdef.filter.categoryBits = RetroGame.WALL_BIT;
             body.createFixture(fdef);
@@ -95,7 +95,7 @@ public class B2WorldCreator {
 
             body = world.createBody(bdef);
 
-            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2.01f) / RetroGame.PPM);
+            shape.setAsBox((rect.getWidth() / 2.01f) / RetroGame.PPM, (rect.getHeight() / 2f) / RetroGame.PPM);
             fdef.shape = shape;
             fdef.filter.categoryBits = RetroGame.TRAMPOLINE_BIT;
             body.createFixture(fdef);

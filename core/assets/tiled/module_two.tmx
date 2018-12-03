@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="226">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="227">
  <tileset firstgid="1" name="AllSprites" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="196" columns="14">
   <image source="AllSprites.png" width="256" height="256"/>
  </tileset>
@@ -153,13 +153,14 @@
   <object id="117" x="352" y="112" width="16"/>
   <object id="118" x="336" y="128" width="16"/>
  </objectgroup>
- <objectgroup id="11" name="Trampolines" visible="0">
+ <objectgroup id="11" name="Trampolines">
   <object id="176" x="464" y="208" width="16"/>
   <object id="177" x="560" y="208" width="16"/>
   <object id="178" x="576" y="320" width="16"/>
   <object id="179" x="304" y="224" width="16"/>
   <object id="180" x="112" y="288" width="16"/>
   <object id="181" x="144" y="96" width="16"/>
+  <object id="226" x="288" y="96" width="16"/>
  </objectgroup>
  <objectgroup id="7" name="One Way Platforms" visible="0"/>
  <objectgroup id="8" name="Crumble Platforms" visible="0">

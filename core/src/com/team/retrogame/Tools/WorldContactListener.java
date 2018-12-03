@@ -50,7 +50,6 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).die();
                 break;
-            /*
             //Blobb collides with trampoline
             case RetroGame.BLOBB_BIT | RetroGame.TRAMPOLINE_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
@@ -58,7 +57,7 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).bounce();
                 break;
-            }*/
+            }
 
             /*
             //Blobb collides with goal
@@ -91,7 +90,6 @@ public class WorldContactListener implements ContactListener {
             }*/
 
         }
-    }
 
 
     @Override
