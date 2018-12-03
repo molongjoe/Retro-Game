@@ -64,7 +64,7 @@ public class RetroGame extends Game {
 		manager.load("audio/sounds/spring.mp3", Sound.class);
 		*/
 		manager.finishLoading();
-		setScreen(new PlayScreen(this, "module_one.tmx"));
+		setScreen(new PlayScreen(this, "tiled/module_one.tmx"));
 	}
 
 	//dispose of resources

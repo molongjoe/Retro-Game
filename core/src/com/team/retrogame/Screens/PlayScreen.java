@@ -62,15 +62,15 @@ public class PlayScreen implements Screen {
     //modules/module utilities
     private Random rand = new Random();
     private int moduleNum = 0;
-    //String[] module = {"module_one.tmx", "module_two.tmx", "module_three.tmx", "module_four.tmx", "module_five.tmx", "module_six.tmx"};
+    //String[] module = {"tiled/module_one.tmx", "tiled/module_two.tmx", "tiled/module_three.tmx", "tiled/module_four.tmx", "tiled/module_five.tmx", "tiled/module_six.tmx"};
     private LinkedList<String> levelModules = new LinkedList<String>(){
         {
-            add("module_one.tmx");
-            add("module_two.tmx");
-            add("module_three.tmx");
-            add("module_four.tmx");
-            add("module_five.tmx");
-            add("module_six.tmx");
+            add("tiled/module_one.tmx");
+            add("tiled/module_two.tmx");
+            add("tiled/module_three.tmx");
+            add("tiled/module_four.tmx");
+            add("tiled/module_five.tmx");
+            add("tiled/module_six.tmx");
         }
     };
 
@@ -79,7 +79,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
-        atlas = new TextureAtlas("AllSprites.atlas");
+        atlas = new TextureAtlas("tiled/AllSprites.atlas");
 
         this.game = game;
         //create cam used to follow the player through game world
