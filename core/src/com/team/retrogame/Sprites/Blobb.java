@@ -241,10 +241,11 @@ public class Blobb extends Sprite {
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
         fdef.filter.maskBits = RetroGame.GROUND_BIT |
                 RetroGame.WALL_BIT |
-                RetroGame.ONE_WAY_WALL_BIT |
                 RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT;
-
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
         fdef.shape = shape;
         //fdef.friction = (float)0.5;
         b2Body.createFixture(fdef).setUserData(this);
