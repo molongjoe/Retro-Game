@@ -26,10 +26,12 @@ public class Blobb extends Sprite {
     String[] pounding = {"Pound-1", "Pound-2", "Pound-3"};
     String[] grabbing = {"Grab-1", "Grab-2", "Grab-3", "Grab-4", "Grab-5", "Grab-6"};
     String[] floating = {"Floating-1","Floating-2","Floating-3","Floating-4"};
+    String[] dashing = {"Dashing-1", "Dashing-2", "Dashing-3"};
+    String[] sliding = {"Sliding-1", "Sliding-2"};
 
     //All the states Blobb can be in
     public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING,
-        SLIDING_S /* State used to develop sliding behavior */}
+        SLIDING, DASHING /* State used to develop sliding behavior */}
 
     //log current state and previous state
     public State currentState;
@@ -48,6 +50,8 @@ public class Blobb extends Sprite {
     private Animation<TextureRegion> BlobbGrab;
     private Animation<TextureRegion> BlobbFall;
     private Animation<TextureRegion> BlobbFloat;
+    private Animation<TextureRegion> BlobbSlide;
+    private Animation<TextureRegion> BlobbDash;
     private TextureRegion BlobbDead;
 
     //behavioral checks
@@ -81,6 +85,8 @@ public class Blobb extends Sprite {
         Array<TextureRegion> grabbing_frames = new Array<TextureRegion>();
         Array<TextureRegion> falling_frames = new Array<TextureRegion>();
         Array<TextureRegion> floating_frames = new Array<TextureRegion>();
+        Array<TextureRegion> sliding_frames = new Array<TextureRegion>();
+        Array<TextureRegion> dashing_frames = new Array<TextureRegion>();
 
         //Add the different running sprites to our running frames
         for(int i = 0; i <= 7; i++) {
@@ -112,6 +118,14 @@ public class Blobb extends Sprite {
             floating_frames.add(new TextureRegion(screen.getAtlas().findRegion(floating[i]), 0, 0, 16, 16));
         }
 
+        for(int i = 0; i <= 2; i++){
+            dashing_frames.add(new TextureRegion(screen.getAtlas().findRegion(dashing[i]), 0, 0, 16, 16));
+        }
+
+        for(int i = 0; i <= 1; i++){
+            sliding_frames.add(new TextureRegion(screen.getAtlas().findRegion(sliding[i]), 0, 0, 16, 16));
+        }
+
 
         //Create the animation of Running
         BlobbRun = new Animation<TextureRegion>(0.1f, running_frames);
@@ -140,6 +154,13 @@ public class Blobb extends Sprite {
         //Create the animation of Floating
         BlobbFloat = new Animation<TextureRegion>(0.1f, floating_frames);
         floating_frames.clear();
+
+        //Create the animation of Dashing
+        BlobbDash = new Animation<TextureRegion>(0.1f, dashing_frames);
+        dashing_frames.clear();
+
+        BlobbSlide = new Animation<TextureRegion>(0.1f, sliding_frames);
+        sliding_frames.clear();
 
         //create texture region for Blobb standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
@@ -197,9 +218,13 @@ public class Blobb extends Sprite {
                 region = BlobbGrab.getKeyFrame(stateTimer, false);
                 grabCheck();
                 break;
-            case SLIDING_S:
+            case SLIDING:
                 // handle sliding animation here
                 slideCheck();
+                break;
+            case DASHING:
+                //handle dashing animation here
+                //dashingCheck();
                 break;
 
             default:
@@ -240,7 +265,7 @@ public class Blobb extends Sprite {
         //Box2D fixture settings
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(5 / RetroGame.PPM, 5 / RetroGame.PPM);
+        shape.setAsBox(5 / RetroGame.PPM, 7 / RetroGame.PPM);
 
         //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
@@ -258,10 +283,74 @@ public class Blobb extends Sprite {
         //Give Blobb an edge to serve as his feet
         FixtureDef fdef2 = new FixtureDef();
         EdgeShape feet = new EdgeShape();
-        feet.set(new Vector2(-2 / RetroGame.PPM, -6 / RetroGame.PPM), new Vector2(2 / RetroGame.PPM, -6 / RetroGame.PPM));
+        feet.set(new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
         fdef2.shape = feet;
+
+        //Set what Blobb can collide with
+        fdef2.filter.categoryBits = RetroGame.BLOBB_FEET_BIT;
+        fdef2.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
         fdef2.isSensor = true;
         b2Body.createFixture(fdef2).setUserData("feet");
+
+        //Give Blobb an edge to serve as his head
+        FixtureDef fdef3 = new FixtureDef();
+        EdgeShape head = new EdgeShape();
+        feet.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM));
+        fdef3.shape = head;
+
+        //Set what Blobb can collide with
+        fdef3.filter.categoryBits = RetroGame.BLOBB_HEAD_BIT;
+        fdef3.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
+        fdef3.isSensor = true;
+        b2Body.createFixture(fdef3).setUserData("head");
+
+        //Give Blobb an edge to serve as his left
+        FixtureDef fdef4 = new FixtureDef();
+        EdgeShape left = new EdgeShape();
+        left.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM));
+        fdef4.shape = left;
+
+        //Set what Blobb can collide with
+        fdef4.filter.categoryBits = RetroGame.BLOBB_LEFT_BIT;
+        fdef4.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
+        fdef4.isSensor = true;
+        b2Body.createFixture(fdef4).setUserData("left");
+
+        //Give Blobb an edge to serve as his right
+        FixtureDef fdef5 = new FixtureDef();
+        EdgeShape right = new EdgeShape();
+        right.set(new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
+        fdef5.shape = right;
+
+        //Set what Blobb can collide with
+        fdef5.filter.categoryBits = RetroGame.BLOBB_RIGHT_BIT;
+        fdef5.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
+        fdef5.isSensor = true;
+        b2Body.createFixture(fdef5).setUserData("right");
     }
 
     private State getState(){
@@ -320,7 +409,7 @@ public class Blobb extends Sprite {
         }
 
         else if (setToSlide) {
-            return State.SLIDING_S;
+            return State.SLIDING;
         }
 
         else if (setToGrab) {
@@ -328,7 +417,7 @@ public class Blobb extends Sprite {
         }
 
 //        else if (b2Body.getLinearVelocity().y < 0) {
-//            return State.SLIDING_S
+//            return State.SLIDING
 //        }
 
         //default him standing

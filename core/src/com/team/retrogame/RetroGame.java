@@ -32,13 +32,15 @@ public class RetroGame extends Game {
     public static final short GROUND_BIT = 1;
 	public static final short WALL_BIT = 2;
 	public static final short BLOBB_BIT = 4;
-	public static final short SPIKE_BIT = 8;
-	public static final short TRAMPOLINE_BIT = 16;
-	public static final short ONE_WAY_PLATFORM_BIT = 32;
-	public static final short CRUMBLE_PLATFORM_BIT = 64;
-	public static final short GOAL_BIT = 128;
-
-
+	public static final short BLOBB_FEET_BIT = 8;
+	public static final short BLOBB_HEAD_BIT = 16;
+	public static final short BLOBB_LEFT_BIT = 32;
+	public static final short BLOBB_RIGHT_BIT = 64;
+	public static final short SPIKE_BIT = 128;
+	public static final short TRAMPOLINE_BIT = 256;
+	public static final short ONE_WAY_PLATFORM_BIT = 512;
+	public static final short CRUMBLE_PLATFORM_BIT = 1024;
+	public static final short GOAL_BIT = 2048;
 
 	//Universal SpriteBatch. All sprites contained, and passed around by this one instance
 	public SpriteBatch batch;
