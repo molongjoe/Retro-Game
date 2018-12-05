@@ -122,7 +122,7 @@ public class Blobb extends Sprite {
             dashing_frames.add(new TextureRegion(screen.getAtlas().findRegion(dashing[i]), 0, 0, 16, 16));
         }
 
-        for(int i = 0; i <= 3; i++){
+        for(int i = 0; i <= 1; i++){
             sliding_frames.add(new TextureRegion(screen.getAtlas().findRegion(sliding[i]), 0, 0, 16, 16));
         }
 
