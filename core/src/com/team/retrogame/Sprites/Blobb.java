@@ -61,6 +61,7 @@ public class Blobb extends Sprite {
     public boolean setToSplat = false;
     public boolean setToGrab = false;
     public boolean setToSlide = false;
+    public boolean setToBounce = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -433,20 +434,22 @@ public class Blobb extends Sprite {
         }
     }
 
+    public void bounce() {
+        b2Body.applyLinearImpulse(new Vector2(0, 5f), b2Body.getWorldCenter(), true);
+    }
+
     public void clearMovementFlags() {
         setToPound = false;
         setToFloat = false;
         setToSplat = false;
         setToGrab = false;
         setToSlide = false;
+        setToBounce = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        if (setToFloat || setToPound || setToSplat || setToGrab )
-            return true;
-        else
-            return false;
+        return (setToFloat || setToPound || setToSplat || setToGrab || setToBounce );
     }
 
     public void die() {

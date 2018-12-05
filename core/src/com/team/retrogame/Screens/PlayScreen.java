@@ -148,6 +148,11 @@ public class PlayScreen implements Screen {
                     !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                     player.startGrab();
                 }
+                // Implementation of bounce: player falling normally sets setToBounce. At contact with ground
+                // call bounce() function. No need to check setToBounce, since clearMovementFlags wipes it out every frame.
+                if (Gdx.input.isKeyPressed(Input.Keys.F) && (player.b2Body.getLinearVelocity().y < 0)) {
+                    player.setToBounce = true;
+                }
                 // Detect D just released
                 if (!Gdx.input.isKeyPressed(Input.Keys.D) && (player.currentState == Blobb.State.GRABBING)) {
                     if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
