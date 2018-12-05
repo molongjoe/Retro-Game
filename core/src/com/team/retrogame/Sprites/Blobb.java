@@ -399,7 +399,7 @@ public class Blobb extends Sprite {
     }
 
     public void slideCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.DOWN) || !touchingWall) {
             setToSlide = false;
             System.err.println("slideCheck just failed");
             b2Body.setGravityScale(1);
