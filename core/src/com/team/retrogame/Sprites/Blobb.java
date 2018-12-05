@@ -55,6 +55,7 @@ public class Blobb extends Sprite {
     private float stateTimer;
     private boolean runningRight;
     public boolean touchingWall;
+    public boolean touchingGround;
 
     public boolean setToPound = false;
     public boolean setToFloat = false;

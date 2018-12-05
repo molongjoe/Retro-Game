@@ -116,7 +116,6 @@ public class WorldContactListener implements ContactListener {
                     ((Blobb) fixB.getUserData()).touchingWall = false;
                 break;
 
-            /*
             //Blobb has ended collision with the ground
             case RetroGame.BLOBB_BIT | RetroGame.GROUND_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
@@ -124,7 +123,6 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).touchingGround = false;
                 break;
-            */
 
             /*
             //Blobb has ended collision with a one way platform
