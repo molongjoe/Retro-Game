@@ -55,6 +55,7 @@ public class Blobb extends Sprite {
     private float stateTimer;
     private boolean runningRight;
     public boolean touchingWall;
+    public boolean touchingGround;
 
     public boolean setToPound = false;
     public boolean setToFloat = false;
@@ -246,10 +247,11 @@ public class Blobb extends Sprite {
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
         fdef.filter.maskBits = RetroGame.GROUND_BIT |
                 RetroGame.WALL_BIT |
-                RetroGame.ONE_WAY_WALL_BIT |
                 RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT;
-
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
         fdef.shape = shape;
         //fdef.friction = (float)0.5;
         b2Body.createFixture(fdef).setUserData(this);
@@ -275,15 +277,15 @@ public class Blobb extends Sprite {
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
             else if (b2Body.getLinearVelocity().x != 0) {
-                if (currentState == State.JUMPING)
-                    RetroGame.manager.get("Bubble sound.mp3",Sound.class).play();
+                //if (currentState == State.JUMPING)
+                    //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.RUNNING;
             }
             //if none of these return then he must be standing.
             else {
                 clearMovementFlags();
-                if (currentState == State.JUMPING)
-                    RetroGame.manager.get("Bubble sound.mp3",Sound.class).play();
+                //if (currentState == State.JUMPING)
+                    //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.STANDING;
             }
         } // end if not special movement
@@ -295,6 +297,7 @@ public class Blobb extends Sprite {
             if (b2Body.getGravityScale() == 1 && b2Body.getLinearVelocity().y == 0) {
                 setToPound = false;
                 setToSplat = true;
+                //RetroGame.manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
                 return State.SPLATTING;
             }
             //otherwise still pounding
@@ -347,6 +350,7 @@ public class Blobb extends Sprite {
 
     public void jump() {
         b2Body.applyLinearImpulse(new Vector2(0, 3.3f), b2Body.getWorldCenter(), true);
+        //RetroGame.manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
     }
 
     public void moveLeft() {
@@ -363,8 +367,16 @@ public class Blobb extends Sprite {
         jump();
     }
 
+    public void bounce() {
+        if (b2Body.getLinearVelocity().y < 0) {
+            b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
+            b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
+        }
+    }
+
     public void startPound() {
         setToPound = true;
+        //RetroGame.manager.load("audio/sounds/bubblePound.mp3", Sound.class);
     }
 
     public void startSplat() {
@@ -399,12 +411,18 @@ public class Blobb extends Sprite {
 
     public void startFloat() {
         setToFloat = true;
+        //RetroGame.manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
     }
 
     public void floatCheck() {
         if (!Gdx.input.isKeyPressed(Input.Keys.S) || b2Body.getLinearVelocity().y == 0 || stateTimer > 3) {
             setToFloat = false;
             b2Body.setGravityScale(1);
+            //if (stateTimer > 3)
+                //RetroGame.manager.load("audio/sounds/bubblePop.mp3", Sound.class);
+
+            //else
+                //RetroGame.manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
         }
 
         else {

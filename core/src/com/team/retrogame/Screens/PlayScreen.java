@@ -21,6 +21,7 @@ import com.team.retrogame.Sprites.Blobb;
 import com.team.retrogame.Tools.B2WorldCreator;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
+import java.util.*;
 
 /**
  * created by Ben Mankin on 09/13/18.
@@ -58,14 +59,27 @@ public class PlayScreen implements Screen {
     private boolean setToPause;
     private boolean setToResume;
 
-    int moduleNum = 0;
-    String[] module = {"module_one.tmx", "module_two.tmx", "module_three.tmx", "module_four.tmx", "module_five.tmx", "module_six.tmx"};
+    //modules/module utilities
+    private Random rand = new Random();
+    private int moduleNum = 0;
+    //String[] module = {"tiled/module_one.tmx", "tiled/module_two.tmx", "tiled/module_three.tmx", "tiled/module_four.tmx", "tiled/module_five.tmx", "tiled/module_six.tmx"};
+    private LinkedList<String> levelModules = new LinkedList<String>(){
+        {
+            add("tiled/module_one.tmx");
+            add("tiled/module_two.tmx");
+            add("tiled/module_three.tmx");
+            add("tiled/module_four.tmx");
+            add("tiled/module_five.tmx");
+            add("tiled/module_six.tmx");
+        }
+    };
+
 
 
 
     public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
-        atlas = new TextureAtlas("AllSprites.atlas");
+        atlas = new TextureAtlas("tiled/Blobb.atlas");
 
         this.game = game;
         //create cam used to follow the player through game world
@@ -100,12 +114,10 @@ public class PlayScreen implements Screen {
 
         world.setContactListener(new WorldContactListener());
 
-        /*
-        music = RetroGame.manager.get("audio/music/Blobb_music.ogg", Music.class);
+        music = RetroGame.manager.get("audio/music/iwishthiswasundertale.mp3", Music.class);
         music.setLooping(true);
         music.setVolume(0.3f);
         music.play();
-        */
 
         setToPause = false;
         setToResume = false;
@@ -222,7 +234,7 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         //render the Box2DDebugLines
-        //b2dr.render(world, gamecam.combined);
+        b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
@@ -241,12 +253,9 @@ public class PlayScreen implements Screen {
         //if a floor is cleared, set the screen to be the new floor (lacks transition)
         if (floorClear()) {
 
-            moduleNum++;
-            if(moduleNum > 1){
-                moduleNum--;
-            }
+            moduleNum = rand.nextInt(levelModules.size());
 
-            game.setScreen(new PlayScreen(game, module[moduleNum]));
+            game.setScreen(new PlayScreen(game, levelModules.remove(moduleNum)));
             dispose();
         }
 
