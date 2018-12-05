@@ -2,7 +2,6 @@ package com.team.retrogame.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -29,7 +28,8 @@ public class Blobb extends Sprite {
     String[] floating = {"Floating-1","Floating-2","Floating-3","Floating-4"};
 
     //All the states Blobb can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING}
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING,
+        SLIDING_S /* State used to develop sliding behavior */}
 
     //log current state and previous state
     public State currentState;
@@ -54,13 +54,14 @@ public class Blobb extends Sprite {
     private float stateTimer;
     private boolean runningRight;
     public boolean touchingWall;
+    public boolean touchingGround;
 
     public boolean setToPound = false;
     public boolean setToFloat = false;
     public boolean setToSplat = false;
     public boolean setToGrab = false;
-
-
+    public boolean setToSlide = false;
+    public boolean setToButtBounce = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -196,6 +197,10 @@ public class Blobb extends Sprite {
                 region = BlobbGrab.getKeyFrame(stateTimer, false);
                 grabCheck();
                 break;
+            case SLIDING_S:
+                // handle sliding animation here
+                slideCheck();
+                break;
 
             default:
                 region = BlobbStand;
@@ -261,13 +266,13 @@ public class Blobb extends Sprite {
 
     private State getState(){
 
-        //if not doing special action (pounding, floating)
+        //if not doing special action (pounding, floating, wall-jumping)
         if (!specialMovement()) {
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
             if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
                 return State.JUMPING;
             //if negative in Y-Axis Blobb is falling
-            else if (b2Body.getLinearVelocity().y < 0)
+            else if (b2Body.getLinearVelocity().y < 0) // TODO: create setToFall flag to force falling even after no jump
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
             else if (b2Body.getLinearVelocity().x != 0) {
@@ -282,7 +287,7 @@ public class Blobb extends Sprite {
                     //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.STANDING;
             }
-        }
+        } // end if not special movement
 
 
         //if pounding
@@ -298,6 +303,8 @@ public class Blobb extends Sprite {
             else
                 return State.POUNDING;
         }
+        // TODO: State walljumping
+        // TODO: setToWallJump
 
         else if (setToSplat) {
             if (BlobbSplat.isAnimationFinished(stateTimer)) {
@@ -312,13 +319,24 @@ public class Blobb extends Sprite {
             return State.FLOATING;
         }
 
+        else if (setToSlide) {
+            return State.SLIDING_S;
+        }
+
         else if (setToGrab) {
             return State.GRABBING;
         }
 
+//        else if (b2Body.getLinearVelocity().y < 0) {
+//            return State.SLIDING_S
+//        }
+
         //default him standing
-        else
+        else {
+            System.err.println("Back to standing");
+            clearMovementFlags();
             return State.STANDING;
+        }
     }
 
     public float getStateTimer() {
@@ -340,6 +358,12 @@ public class Blobb extends Sprite {
 
     public void moveRight() {
         b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void wallJump() {
+        // TODO: Jump Logic -- get direction facing and apply angular impulse in opposite direction
+//        b2Body.applyAngularImpulse();
+        jump();
     }
 
     public void bounce() {
@@ -369,6 +393,21 @@ public class Blobb extends Sprite {
         }
     }
 
+    public void startSlide() {
+        System.err.println("startSlide() method called");
+        setToSlide = true;
+    }
+
+    public void slideCheck() {
+        if (!Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            setToSlide = false;
+            System.err.println("slideCheck just failed");
+            b2Body.setGravityScale(1);
+        } else {
+            b2Body.setLinearVelocity(0, -0.5f);
+        }
+    }
+
     public void startFloat() {
         setToFloat = true;
         //RetroGame.manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
@@ -392,6 +431,7 @@ public class Blobb extends Sprite {
     }
 
     public void startGrab() {
+        System.err.println("Starting grab");
         setToGrab = true;
     }
 
@@ -399,6 +439,10 @@ public class Blobb extends Sprite {
         if (!Gdx.input.isKeyPressed(Input.Keys.D) || !touchingWall) {
             setToGrab = false;
             b2Body.setGravityScale(1);
+            System.out.println("Ending Grab");
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            setToSlide = true;
+            setToGrab = false;
         }
 
         else {
@@ -407,19 +451,28 @@ public class Blobb extends Sprite {
         }
     }
 
+    /**
+    TODO: Decide behavior. There's not much room to be better than a normal jump but worse than a trampoline.
+     Currently written so jump height mirrors fall height
+     */
+    public void buttBounce() {
+//        b2Body.applyLinearImpulse(new Vector2(0, 4f), b2Body.getWorldCenter(), true);
+        float vy = (b2Body.getLinearVelocity().y * -1) + .5f;
+        b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, vy);
+    }
+
     public void clearMovementFlags() {
         setToPound = false;
         setToFloat = false;
         setToSplat = false;
         setToGrab = false;
+        setToSlide = false;
+        setToButtBounce = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        if (setToFloat || setToPound || setToSplat || setToGrab)
-            return true;
-        else
-            return false;
+        return (setToFloat || setToPound || setToSplat || setToGrab || setToButtBounce);
     }
 
     public void die() {
