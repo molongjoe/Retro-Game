@@ -240,7 +240,7 @@ public class Blobb extends Sprite {
         //Box2D fixture settings
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(5 / RetroGame.PPM, 5 / RetroGame.PPM);
+        shape.setAsBox(5 / RetroGame.PPM, 7 / RetroGame.PPM);
 
         //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
@@ -258,10 +258,74 @@ public class Blobb extends Sprite {
         //Give Blobb an edge to serve as his feet
         FixtureDef fdef2 = new FixtureDef();
         EdgeShape feet = new EdgeShape();
-        feet.set(new Vector2(-2 / RetroGame.PPM, -6 / RetroGame.PPM), new Vector2(2 / RetroGame.PPM, -6 / RetroGame.PPM));
+        feet.set(new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
         fdef2.shape = feet;
+
+        //Set what Blobb can collide with
+        fdef2.filter.categoryBits = RetroGame.BLOBB_FEET_BIT;
+        fdef2.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
         fdef2.isSensor = true;
         b2Body.createFixture(fdef2).setUserData("feet");
+
+        //Give Blobb an edge to serve as his head
+        FixtureDef fdef3 = new FixtureDef();
+        EdgeShape head = new EdgeShape();
+        feet.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM));
+        fdef3.shape = head;
+
+        //Set what Blobb can collide with
+        fdef3.filter.categoryBits = RetroGame.BLOBB_HEAD_BIT;
+        fdef3.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
+        fdef3.isSensor = true;
+        b2Body.createFixture(fdef3).setUserData("head");
+
+        //Give Blobb an edge to serve as his left
+        FixtureDef fdef4 = new FixtureDef();
+        EdgeShape left = new EdgeShape();
+        left.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM));
+        fdef4.shape = left;
+
+        //Set what Blobb can collide with
+        fdef4.filter.categoryBits = RetroGame.BLOBB_LEFT_BIT;
+        fdef4.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
+        fdef4.isSensor = true;
+        b2Body.createFixture(fdef4).setUserData("left");
+
+        //Give Blobb an edge to serve as his right
+        FixtureDef fdef5 = new FixtureDef();
+        EdgeShape right = new EdgeShape();
+        right.set(new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
+        fdef5.shape = right;
+
+        //Set what Blobb can collide with
+        fdef5.filter.categoryBits = RetroGame.BLOBB_RIGHT_BIT;
+        fdef5.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.WALL_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
+        fdef5.isSensor = true;
+        b2Body.createFixture(fdef5).setUserData("right");
     }
 
     private State getState(){

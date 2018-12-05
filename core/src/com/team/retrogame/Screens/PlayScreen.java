@@ -314,7 +314,6 @@ public class PlayScreen implements Screen {
 
     @Override
     public void hide() {
-
     }
 
     @Override
