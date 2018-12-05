@@ -2,7 +2,6 @@ package com.team.retrogame.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -62,7 +61,7 @@ public class Blobb extends Sprite {
     public boolean setToSplat = false;
     public boolean setToGrab = false;
     public boolean setToSlide = false;
-    public boolean setToBounce = false;
+    public boolean setToButtBounce = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -452,8 +451,14 @@ public class Blobb extends Sprite {
         }
     }
 
-    public void bounce() {
-        b2Body.applyLinearImpulse(new Vector2(0, 5f), b2Body.getWorldCenter(), true);
+    /**
+    TODO: Decide behavior. There's not much room to be better than a normal jump but worse than a trampoline.
+     Currently written so jump height mirrors fall height
+     */
+    public void buttBounce() {
+//        b2Body.applyLinearImpulse(new Vector2(0, 4f), b2Body.getWorldCenter(), true);
+        float vy = (b2Body.getLinearVelocity().y * -1) + .5f;
+        b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, vy);
     }
 
     public void clearMovementFlags() {
@@ -462,12 +467,12 @@ public class Blobb extends Sprite {
         setToSplat = false;
         setToGrab = false;
         setToSlide = false;
-        setToBounce = false;
+        setToButtBounce = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        return (setToFloat || setToPound || setToSplat || setToGrab || setToBounce );
+        return (setToFloat || setToPound || setToSplat || setToGrab || setToButtBounce);
     }
 
     public void die() {

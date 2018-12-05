@@ -1,5 +1,7 @@
 package com.team.retrogame.Tools;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -57,7 +59,16 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).bounce();
                 break;
+            //Blobb hits the ground while holding bounce button
+            case RetroGame.BLOBB_BIT | RetroGame.GROUND_BIT:
+                if (!Gdx.input.isKeyPressed(Input.Keys.F)) break;
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+                    ((Blobb) fixA.getUserData()).buttBounce();
+                else
+                    ((Blobb) fixB.getUserData()).buttBounce();
+                break;
             }
+
 
             /*
             //Blobb collides with goal
