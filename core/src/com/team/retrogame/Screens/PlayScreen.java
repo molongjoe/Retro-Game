@@ -66,11 +66,13 @@ public class PlayScreen implements Screen {
     private LinkedList<String> levelModules = new LinkedList<String>(){
         {
             add("tiled/module_one.tmx");
-            add("tiled/module_two.tmx");
+            add("tiled/module_eight.tmx");
             add("tiled/module_three.tmx");
             add("tiled/module_four.tmx");
             add("tiled/module_five.tmx");
             add("tiled/module_six.tmx");
+            add("tiled/module_seven.tmx");
+            add("tiled/module_eight.tmx");
         }
     };
 
@@ -234,7 +236,7 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         //render the Box2DDebugLines
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
