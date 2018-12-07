@@ -30,6 +30,7 @@ public class RetroGame extends Game {
 	 */
 	public static final short NOTHING_BIT = 0;
     public static final short GROUND_BIT = 1;
+	public static final short WALL_BIT = 2048;
 	public static final short BLOBB_GENERAL_BIT = 2;
 	public static final short BLOBB_FEET_BIT = 4;
 	public static final short BLOBB_HEAD_BIT = 8;
