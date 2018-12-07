@@ -142,13 +142,16 @@ public class PlayScreen implements Screen {
         if(player.currentState != Blobb.State.DEAD) {
             //if game isn't paused and player isn't performing a special action, these inputs are valid
             if(setToResume || !setToPause) {
+
                 //if player is standing or running
                 if(player.currentState == Blobb.State.STANDING || player.currentState == Blobb.State.RUNNING) {
+                    player.canFloat = true;
+                    player.canDash = true;
                     if (Gdx.input.isKeyPressed(Input.Keys.A))
                         player.moveLeftGround();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightGround();
-                    if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.groundJump();
                 }
 
@@ -158,57 +161,56 @@ public class PlayScreen implements Screen {
                         player.moveLeftAir();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightAir();
-                    if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
                         player.startFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.K))
-                        player.startGrab();
-                    if (Gdx.input.isKeyPressed(Input.Keys.L))
-                        player.startPound();
-                    if (Gdx.input.isKeyPressed(Input.Keys.J))
+                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
                         player.startDash();
+                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                        player.startPound();
                 }
 
+                //if player is dashing
                 if(player.currentState == Blobb.State.DASHING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
-                        player.buttBounce();
                 }
 
                 //if player is floating
                 if(player.currentState == Blobb.State.FLOATING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+                    if (Gdx.input.isKeyPressed(Input.Keys.A))
                         player.moveLeftFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+                    if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
-                        player.startFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.L))
+                    if (Gdx.input.isKeyPressed(Input.Keys.K))
                         player.startPound();
-                    if (Gdx.input.isKeyPressed(Input.Keys.J))
-                        player.startDash();
                 }
 
+                //if player is pounding
                 if(player.currentState == Blobb.State.POUNDING) {
 
                 }
 
+
+                //if player is splatting
                 if(player.currentState == Blobb.State.SPLATTING) {
                     if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
                         player.buttBounce();
                 }
 
+                //if player is sliding
                 if(player.currentState == Blobb.State.SLIDING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+                    if (Gdx.input.isKeyPressed(Input.Keys.A))
                         player.moveLeftSlide();
-                    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+                    if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightSlide();
                 }
 
+                //if player is grabbing
                 if(player.currentState == Blobb.State.GRABBING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+                    if (Gdx.input.isKeyPressed(Input.Keys.A))
                         player.leftGrab();
-                    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+                    if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.rightGrab();
                 }
+
 
                 // Implementation of bounce: player falling normally sets setToButtBounce. At contact with ground
                 // call bounce() function. No need to check setToButtBounce, since clearMovementFlags wipes it out every frame.
@@ -288,6 +290,7 @@ public class PlayScreen implements Screen {
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
+        player.draw(game.batch);
         game.batch.end();
 
         //Set the batch to now draw what the Hud camera sees.

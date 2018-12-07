@@ -42,13 +42,13 @@ public class WorldContactListener implements ContactListener {
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_HEAD_BIT)
                     ((Blobb) fixA.getUserData()).headOnCeiling = true;
                 else
-                    ((Blobb) fixA.getUserData()).headOnCeiling = true;
+                    ((Blobb) fixB.getUserData()).headOnCeiling = true;
                 break;
             case RetroGame.BLOBB_FEET_BIT | RetroGame.GROUND_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT)
                     ((Blobb) fixA.getUserData()).feetOnGround = true;
                 else
-                    ((Blobb) fixA.getUserData()).feetOnGround = true;
+                    ((Blobb) fixB.getUserData()).feetOnGround = true;
                 break;
             case RetroGame.BLOBB_LEFT_BIT | RetroGame.GROUND_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_LEFT_BIT)
@@ -56,12 +56,14 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).onLeftWall = true;
                     break;
+
             case RetroGame.BLOBB_RIGHT_BIT | RetroGame.GROUND_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_RIGHT_BIT)
                     ((Blobb) fixA.getUserData()).onRightWall = true;
                 else
                     ((Blobb) fixB.getUserData()).onRightWall = true;
                 break;
+
             //Blobb collides with spike
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.SPIKE_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
@@ -70,21 +72,23 @@ public class WorldContactListener implements ContactListener {
                     ((Blobb) fixB.getUserData()).die();
                 break;
             //Blobb collides with trampoline
-            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.TRAMPOLINE_BIT:
-                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
-                    ((Blobb) fixA.getUserData()).bounce();
+            case RetroGame.BLOBB_FEET_BIT | RetroGame.TRAMPOLINE_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT)
+                    ((Blobb) fixA.getUserData()).trampolineBounce();
                 else
-                    ((Blobb) fixB.getUserData()).bounce();
+                    ((Blobb) fixB.getUserData()).trampolineBounce();
                 break;
+
+                /*
             //Blobb hits the ground while holding bounce button
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.GROUND_BIT:
-                System.out.println("bean");
                 if (!Gdx.input.isKeyPressed(Input.Keys.F)) break;
                 if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
                     ((Blobb) fixA.getUserData()).buttBounce();
                 else
                     ((Blobb) fixB.getUserData()).buttBounce();
                 break;
+                */
             }
 
 
@@ -161,9 +165,9 @@ public class WorldContactListener implements ContactListener {
             //Blobb has ended collision with the ground
             case RetroGame.BLOBB_RIGHT_BIT | RetroGame.GROUND_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_RIGHT_BIT)
-                    ((Blobb) fixA.getUserData()).headOnCeiling = false;
+                    ((Blobb) fixA.getUserData()).onRightWall = false;
                 else
-                    ((Blobb) fixB.getUserData()).headOnCeiling = false;
+                    ((Blobb) fixB.getUserData()).onRightWall = false;
                 break;
 
             /*
