@@ -38,37 +38,49 @@ public class WorldContactListener implements ContactListener {
          The resulting method is then acted upon the appropriate object.
          */
         switch (cdef) {
-            //Blobb collides with Wall
-            case RetroGame.BLOBB_BIT | RetroGame.WALL_BIT:
-                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
-                    ((Blobb) fixA.getUserData()).touchingWall = true;
-                else
-                    ((Blobb) fixB.getUserData()).touchingWall = true;
-                break;
             case RetroGame.BLOBB_HEAD_BIT | RetroGame.GROUND_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_HEAD_BIT)
-                    System.out.println("touch");
+                    ((Blobb) fixA.getUserData()).headOnCeiling = true;
                 else
-                    System.out.println("touch");
+                    ((Blobb) fixA.getUserData()).headOnCeiling = true;
+                break;
+            case RetroGame.BLOBB_FEET_BIT | RetroGame.GROUND_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT)
+                    ((Blobb) fixA.getUserData()).feetOnGround = true;
+                else
+                    ((Blobb) fixA.getUserData()).feetOnGround = true;
+                break;
+            case RetroGame.BLOBB_LEFT_BIT | RetroGame.GROUND_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_LEFT_BIT)
+                    ((Blobb) fixA.getUserData()).onLeftWall = true;
+                else
+                    ((Blobb) fixB.getUserData()).onLeftWall = true;
+                    break;
+            case RetroGame.BLOBB_RIGHT_BIT | RetroGame.GROUND_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_RIGHT_BIT)
+                    ((Blobb) fixA.getUserData()).onRightWall = true;
+                else
+                    ((Blobb) fixB.getUserData()).onRightWall = true;
                 break;
             //Blobb collides with spike
-            case RetroGame.BLOBB_BIT | RetroGame.SPIKE_BIT:
-                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.SPIKE_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
                     ((Blobb) fixA.getUserData()).die();
                 else
                     ((Blobb) fixB.getUserData()).die();
                 break;
             //Blobb collides with trampoline
-            case RetroGame.BLOBB_BIT | RetroGame.TRAMPOLINE_BIT:
-                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.TRAMPOLINE_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
                     ((Blobb) fixA.getUserData()).bounce();
                 else
                     ((Blobb) fixB.getUserData()).bounce();
                 break;
             //Blobb hits the ground while holding bounce button
-            case RetroGame.BLOBB_BIT | RetroGame.GROUND_BIT:
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.GROUND_BIT:
+                System.out.println("bean");
                 if (!Gdx.input.isKeyPressed(Input.Keys.F)) break;
-                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
                     ((Blobb) fixA.getUserData()).buttBounce();
                 else
                     ((Blobb) fixB.getUserData()).buttBounce();
@@ -78,8 +90,8 @@ public class WorldContactListener implements ContactListener {
 
             /*
             //Blobb collides with goal
-            case RetroGame.BLOBB_BIT | RetroGame.GOAL_BIT:
-                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.GOAL_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
                     ((Blobb) fixA.getUserData()).transition();
                 else
                     ((Blobb) fixB.getUserData()).transition();
@@ -88,7 +100,7 @@ public class WorldContactListener implements ContactListener {
 
             /*
             //Blobb collides with one way platform
-            case RetroGame.BLOBB_BIT | RetroGame.ONE_WAY_PLATFORM_BIT:
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.ONE_WAY_PLATFORM_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.ONE_WAY_PLATFORM_BIT)
                     ((Platform) fixA.getUserData()).checkStandable();
                 else
@@ -98,7 +110,7 @@ public class WorldContactListener implements ContactListener {
 
             /*
             //Blobb collides with crumble platform
-            case RetroGame.BLOBB_BIT | RetroGame.CRUMBLE_PLATFORM_BIT:
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.CRUMBLE_PLATFORM_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.CRUMBLE_PLATFORM_BIT)
                     ((Platform) fixA.getUserData()).startCrumbling();
                 else
@@ -125,25 +137,38 @@ public class WorldContactListener implements ContactListener {
          The resulting method is then acted upon the appropriate object.
          */
         switch (cdef) {
-            //Blobb has ended collision with a wall
-            case RetroGame.BLOBB_BIT | RetroGame.WALL_BIT:
-                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
-                    ((Blobb) fixA.getUserData()).touchingWall = false;
-                else
-                    ((Blobb) fixB.getUserData()).touchingWall = false;
-                break;
-
             //Blobb has ended collision with the ground
-            case RetroGame.BLOBB_BIT | RetroGame.GROUND_BIT:
-                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
-                    ((Blobb) fixA.getUserData()).touchingGround = false;
+            case RetroGame.BLOBB_FEET_BIT | RetroGame.GROUND_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT)
+                    ((Blobb) fixA.getUserData()).feetOnGround = false;
                 else
-                    ((Blobb) fixB.getUserData()).touchingGround = false;
+                    ((Blobb) fixB.getUserData()).feetOnGround = false;
+                break;
+            //Blobb has ended collision with the ground
+            case RetroGame.BLOBB_HEAD_BIT | RetroGame.GROUND_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_HEAD_BIT)
+                    ((Blobb) fixA.getUserData()).headOnCeiling = false;
+                else
+                    ((Blobb) fixB.getUserData()).headOnCeiling = false;
+                break;
+            //Blobb has ended collision with the ground
+            case RetroGame.BLOBB_LEFT_BIT | RetroGame.GROUND_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_LEFT_BIT)
+                    ((Blobb) fixA.getUserData()).onLeftWall = false;
+                else
+                    ((Blobb) fixB.getUserData()).onLeftWall = false;
+                break;
+            //Blobb has ended collision with the ground
+            case RetroGame.BLOBB_RIGHT_BIT | RetroGame.GROUND_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_RIGHT_BIT)
+                    ((Blobb) fixA.getUserData()).headOnCeiling = false;
+                else
+                    ((Blobb) fixB.getUserData()).headOnCeiling = false;
                 break;
 
             /*
             //Blobb has ended collision with a one way platform
-            case RetroGame.BLOBB_BIT | RetroGame.ONE_WAY_PLATFORM_BIT:
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.ONE_WAY_PLATFORM_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.ONE_WAY_PLATFORM_BIT)
                     ((Platform) fixA.getUserData()).checkStandable();
                 else
@@ -153,7 +178,7 @@ public class WorldContactListener implements ContactListener {
 
             /*
             //Blobb has ended collision with a crumble platform
-            case RetroGame.BLOBB_BIT | RetroGame.CRUMBLE_PLATFORM_BIT:
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.CRUMBLE_PLATFORM_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.CRUMBLE_PLATFORM_BIT)
                     ((Platform) fixA.getUserData()).crumble();
                 else
