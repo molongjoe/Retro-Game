@@ -91,10 +91,9 @@
   <object id="32" x="480" y="96" width="64" height="32"/>
   <object id="33" x="128" y="0" width="512" height="16"/>
  </objectgroup>
- <objectgroup id="4" name="Walls"/>
  <objectgroup id="5" name="Spikes"/>
  <objectgroup id="6" name="Trampolines"/>
  <objectgroup id="7" name="One Way Platforms"/>
  <objectgroup id="8" name="Crumble Platforms"/>
- <objectgroup id="9" name="Goal"/>
+ <objectgroup id="9" name="Goal" visible="0"/>
 </map>
