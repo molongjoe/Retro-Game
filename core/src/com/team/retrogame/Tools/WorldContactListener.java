@@ -1,5 +1,7 @@
 package com.team.retrogame.Tools;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -43,6 +45,12 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).touchingWall = true;
                 break;
+            case RetroGame.BLOBB_HEAD_BIT | RetroGame.GROUND_BIT:
+                if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_HEAD_BIT)
+                    System.out.println("touch");
+                else
+                    System.out.println("touch");
+                break;
             //Blobb collides with spike
             case RetroGame.BLOBB_BIT | RetroGame.SPIKE_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
@@ -57,7 +65,16 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).bounce();
                 break;
+            //Blobb hits the ground while holding bounce button
+            case RetroGame.BLOBB_BIT | RetroGame.GROUND_BIT:
+                if (!Gdx.input.isKeyPressed(Input.Keys.F)) break;
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
+                    ((Blobb) fixA.getUserData()).buttBounce();
+                else
+                    ((Blobb) fixB.getUserData()).buttBounce();
+                break;
             }
+
 
             /*
             //Blobb collides with goal
@@ -116,7 +133,6 @@ public class WorldContactListener implements ContactListener {
                     ((Blobb) fixB.getUserData()).touchingWall = false;
                 break;
 
-            /*
             //Blobb has ended collision with the ground
             case RetroGame.BLOBB_BIT | RetroGame.GROUND_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_BIT)
@@ -124,7 +140,6 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).touchingGround = false;
                 break;
-            */
 
             /*
             //Blobb has ended collision with a one way platform
