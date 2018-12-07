@@ -22,6 +22,7 @@ import com.team.retrogame.Tools.B2WorldCreator;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
 import java.util.*;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 /**
  * created by Ben Mankin on 09/13/18.
@@ -73,9 +74,6 @@ public class PlayScreen implements Screen {
             add("tiled/module_six.tmx");
         }
     };
-
-
-
 
     public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
@@ -212,6 +210,9 @@ public class PlayScreen implements Screen {
         b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
+        game.batch.setShader(game.shaderProgram);
+
+
         game.batch.begin();
         player.draw(game.batch);
         game.batch.end();
