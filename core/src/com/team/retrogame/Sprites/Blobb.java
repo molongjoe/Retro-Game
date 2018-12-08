@@ -31,7 +31,7 @@ public class Blobb extends Sprite {
 
     //All the states Blobb can be in
     public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING,
-        SLIDING, DASHING /* State used to develop sliding behavior */}
+        SLIDING, DASHING}
 
     //log current state and previous state
     public State currentState;
@@ -58,7 +58,12 @@ public class Blobb extends Sprite {
     private float stateTimer;
     private boolean runningRight;
     public boolean touchingWall;
-    public boolean touchingGround;
+    public boolean feetOnGround;
+    public boolean headOnCeiling;
+    public boolean onLeftWall;
+    public boolean onRightWall;
+    public boolean canFloat = true;
+    public boolean canDash = true;
 
     public boolean setToPound = false;
     public boolean setToFloat = false;
@@ -66,6 +71,7 @@ public class Blobb extends Sprite {
     public boolean setToGrab = false;
     public boolean setToSlide = false;
     public boolean setToButtBounce = false;
+    public boolean setToDash = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -156,7 +162,7 @@ public class Blobb extends Sprite {
         floating_frames.clear();
 
         //Create the animation of Dashing
-        BlobbDash = new Animation<TextureRegion>(0.1f, dashing_frames);
+        BlobbDash = new Animation<TextureRegion>(0.05f, dashing_frames);
         dashing_frames.clear();
 
         BlobbSlide = new Animation<TextureRegion>(0.1f, sliding_frames);
@@ -179,6 +185,15 @@ public class Blobb extends Sprite {
     public void update(float dt) {
         setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
+
+        //if he's touching a left or right boundary, he's touching a wall
+        touchingWall = onLeftWall || onRightWall;
+        System.out.println("feet: " + feetOnGround + " " +
+                "head: " + headOnCeiling + " " +
+                "left: " + onLeftWall + " " +
+                "right: " + onRightWall);
+
+        System.out.println(currentState);
     }
 
 
@@ -190,6 +205,7 @@ public class Blobb extends Sprite {
         //depending on the state, get corresponding animation keyFrame.
         switch(currentState) {
             case STANDING:
+                region = BlobbStand;
                 break;
             case DEAD:
                 region = BlobbDead;
@@ -219,12 +235,12 @@ public class Blobb extends Sprite {
                 grabCheck();
                 break;
             case SLIDING:
-                // handle sliding animation here
+                region = BlobbSlide.getKeyFrame(stateTimer, false);
                 slideCheck();
                 break;
             case DASHING:
-                //handle dashing animation here
-                //dashingCheck();
+                region = BlobbDash.getKeyFrame(stateTimer, false);
+                dashCheck();
                 break;
 
             default:
@@ -244,6 +260,10 @@ public class Blobb extends Sprite {
             runningRight = true;
         }
 
+        //if Blobb is grabbing right and the texture isnt facing right... flip it.
+        if (setToGrab && onRightWall && region.isFlipX())
+            region.flip(true, false);
+
         //if the current state is the same as the previous state increase the state timer.
         //otherwise the state has changed and the timer needs to be reset
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
@@ -261,6 +281,7 @@ public class Blobb extends Sprite {
         bdef.position.set(320 / RetroGame.PPM, 16 / RetroGame.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2Body = world.createBody(bdef);
+        b2Body.setBullet(true);
 
         //Box2D fixture settings
         FixtureDef fdef = new FixtureDef();
@@ -268,7 +289,7 @@ public class Blobb extends Sprite {
         shape.setAsBox(5 / RetroGame.PPM, 7 / RetroGame.PPM);
 
         //Set what Blobb can collide with
-        fdef.filter.categoryBits = RetroGame.BLOBB_BIT;
+        fdef.filter.categoryBits = RetroGame.BLOBB_GENERAL_BIT;
         fdef.filter.maskBits = RetroGame.GROUND_BIT |
                 RetroGame.WALL_BIT |
                 RetroGame.SPIKE_BIT |
@@ -280,151 +301,90 @@ public class Blobb extends Sprite {
         //fdef.friction = (float)0.5;
         b2Body.createFixture(fdef).setUserData(this);
 
+        //Give Blobb an edge to serve as his head
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM));
+        fdef.filter.categoryBits = RetroGame.BLOBB_HEAD_BIT;
+        fdef.shape = head;
+        fdef.isSensor = true;
+        b2Body.createFixture(fdef).setUserData(this);
+
         //Give Blobb an edge to serve as his feet
-        FixtureDef fdef2 = new FixtureDef();
         EdgeShape feet = new EdgeShape();
         feet.set(new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
-        fdef2.shape = feet;
-
-        //Set what Blobb can collide with
-        fdef2.filter.categoryBits = RetroGame.BLOBB_FEET_BIT;
-        fdef2.filter.maskBits = RetroGame.GROUND_BIT |
-                RetroGame.WALL_BIT |
-                RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT |
-                RetroGame.ONE_WAY_PLATFORM_BIT |
-                RetroGame.CRUMBLE_PLATFORM_BIT |
-                RetroGame.GOAL_BIT;
-        fdef2.isSensor = true;
-        b2Body.createFixture(fdef2).setUserData("feet");
-
-        //Give Blobb an edge to serve as his head
-        FixtureDef fdef3 = new FixtureDef();
-        EdgeShape head = new EdgeShape();
-        feet.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM));
-        fdef3.shape = head;
-
-        //Set what Blobb can collide with
-        fdef3.filter.categoryBits = RetroGame.BLOBB_HEAD_BIT;
-        fdef3.filter.maskBits = RetroGame.GROUND_BIT |
-                RetroGame.WALL_BIT |
-                RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT |
-                RetroGame.ONE_WAY_PLATFORM_BIT |
-                RetroGame.CRUMBLE_PLATFORM_BIT |
-                RetroGame.GOAL_BIT;
-        fdef3.isSensor = true;
-        b2Body.createFixture(fdef3).setUserData("head");
+        fdef.filter.categoryBits = RetroGame.BLOBB_FEET_BIT;
+        fdef.shape = feet;
+        fdef.isSensor = true;
+        b2Body.createFixture(fdef).setUserData(this);
 
         //Give Blobb an edge to serve as his left
-        FixtureDef fdef4 = new FixtureDef();
         EdgeShape left = new EdgeShape();
         left.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM));
-        fdef4.shape = left;
-
-        //Set what Blobb can collide with
-        fdef4.filter.categoryBits = RetroGame.BLOBB_LEFT_BIT;
-        fdef4.filter.maskBits = RetroGame.GROUND_BIT |
-                RetroGame.WALL_BIT |
-                RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT |
-                RetroGame.ONE_WAY_PLATFORM_BIT |
-                RetroGame.CRUMBLE_PLATFORM_BIT |
-                RetroGame.GOAL_BIT;
-        fdef4.isSensor = true;
-        b2Body.createFixture(fdef4).setUserData("left");
+        fdef.filter.categoryBits = RetroGame.BLOBB_LEFT_BIT;
+        fdef.shape = left;
+        fdef.isSensor = true;
+        b2Body.createFixture(fdef).setUserData(this);
 
         //Give Blobb an edge to serve as his right
-        FixtureDef fdef5 = new FixtureDef();
         EdgeShape right = new EdgeShape();
         right.set(new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
-        fdef5.shape = right;
-
-        //Set what Blobb can collide with
-        fdef5.filter.categoryBits = RetroGame.BLOBB_RIGHT_BIT;
-        fdef5.filter.maskBits = RetroGame.GROUND_BIT |
-                RetroGame.WALL_BIT |
-                RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT |
-                RetroGame.ONE_WAY_PLATFORM_BIT |
-                RetroGame.CRUMBLE_PLATFORM_BIT |
-                RetroGame.GOAL_BIT;
-        fdef5.isSensor = true;
-        b2Body.createFixture(fdef5).setUserData("right");
+        fdef.filter.categoryBits = RetroGame.BLOBB_RIGHT_BIT;
+        fdef.shape = right;
+        fdef.isSensor = true;
+        b2Body.createFixture(fdef).setUserData(this);
     }
 
     private State getState(){
 
-        //if not doing special action (pounding, floating, wall-jumping)
         if (!specialMovement()) {
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
-            if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
+            if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && (previousState == State.JUMPING || previousState == State.DASHING)))
                 return State.JUMPING;
-            //if negative in Y-Axis Blobb is falling
-            else if (b2Body.getLinearVelocity().y < 0) // TODO: create setToFall flag to force falling even after no jump
+                //if negative in Y-Axis and was standing, or was falling, Blobb is falling
+            else if ((b2Body.getLinearVelocity().y < 0 && (previousState == State.STANDING || previousState == State.FLOATING))) // TODO: create setToFall flag to force falling even after no jump
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
-            else if (b2Body.getLinearVelocity().x != 0) {
-                //if (currentState == State.JUMPING)
-                    //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
+            else if (b2Body.getLinearVelocity().x != 0 && b2Body.getLinearVelocity().y == 0) {
+                //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.RUNNING;
             }
-            //if none of these return then he must be standing.
+            //default him standing
             else {
                 clearMovementFlags();
-                //if (currentState == State.JUMPING)
-                    //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.STANDING;
             }
-        } // end if not special movement
-
-
-        //if pounding
-        else if (setToPound) {
-            //if he has landed and the pound is finished, he is now splatting
-            if (b2Body.getGravityScale() == 1 && b2Body.getLinearVelocity().y == 0) {
-                setToPound = false;
-                setToSplat = true;
-                //RetroGame.manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
-                return State.SPLATTING;
-            }
-            //otherwise still pounding
-            else
-                return State.POUNDING;
-        }
-        // TODO: State walljumping
-        // TODO: setToWallJump
-
-        else if (setToSplat) {
-            if (BlobbSplat.isAnimationFinished(stateTimer)) {
-                setToSplat = false;
-                return State.STANDING;
-            }
-            else
-                return State.SPLATTING;
         }
 
-        else if (setToFloat) {
-            return State.FLOATING;
-        }
-
-        else if (setToSlide) {
-            return State.SLIDING;
-        }
-
-        else if (setToGrab) {
-            return State.GRABBING;
-        }
-
-//        else if (b2Body.getLinearVelocity().y < 0) {
-//            return State.SLIDING
-//        }
-
-        //default him standing
         else {
-            System.err.println("Back to standing");
-            clearMovementFlags();
-            return State.STANDING;
+            //if pounding
+            if (setToPound) {
+                //if he has landed and the pound is finished, he is now splatting
+                if (b2Body.getGravityScale() == 1 && feetOnGround) {
+                    setToPound = false;
+                    setToSplat = true;
+                    //RetroGame.manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
+                    return State.SPLATTING;
+                }
+                //otherwise still pounding
+                else
+                    return State.POUNDING;
+            } else if (setToSplat) {
+                if (BlobbSplat.isAnimationFinished(stateTimer)) {
+                    setToSplat = false;
+                    return State.STANDING;
+                } else
+                    return State.SPLATTING;
+            } else if (setToFloat) {
+                return State.FLOATING;
+            } else if (setToSlide || previousState == State.SLIDING) {
+                return State.SLIDING;
+            } else if (setToGrab && touchingWall) {
+                return State.GRABBING;
+            } else if (setToDash) {
+                return State.DASHING;
+            } else
+                return State.STANDING;
+
         }
     }
 
@@ -436,39 +396,74 @@ public class Blobb extends Sprite {
         currentState = newState;
     }
 
-    public void jump() {
+    public void moveLeftGround() {
+        //put a cap on left ground movement speed
+        if (b2Body.getLinearVelocity().x >= -2)
+            b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveRightGround() {
+        //put a cap on right ground movement speed
+        if (b2Body.getLinearVelocity().x <= 2)
+            b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveLeftAir() {
+        //put a cap on left air movement speed (same as ground for now)
+        if (b2Body.getLinearVelocity().x >= -2)
+            b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveRightAir() {
+        //put a cap on right air movement speed (same as ground for now)
+        if (b2Body.getLinearVelocity().x <= 2)
+            b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveLeftFloat() {
+        //put a cap on left air movement speed (same as ground for now)
+        if (b2Body.getLinearVelocity().x >= -1)
+            b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveRightFloat() {
+        //put a cap on right air movement speed (same as ground for now)
+        if (b2Body.getLinearVelocity().x <= 1)
+            b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveLeftSlide() {
+        //put a cap on left air movement speed (same as ground for now)
+        if (onRightWall)
+            b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void moveRightSlide() {
+        //put a cap on left air movement speed (same as ground for now)
+        if (onLeftWall)
+            b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void leftGrab() {
+    }
+
+    public void rightGrab() {
+    }
+
+    public void groundJump() {
         b2Body.applyLinearImpulse(new Vector2(0, 3.3f), b2Body.getWorldCenter(), true);
         //RetroGame.manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
-    }
-
-    public void moveLeft() {
-        b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
-    }
-
-    public void moveRight() {
-        b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
     public void wallJump() {
         // TODO: Jump Logic -- get direction facing and apply angular impulse in opposite direction
 //        b2Body.applyAngularImpulse();
-        jump();
-    }
-
-    public void bounce() {
-        if (b2Body.getLinearVelocity().y < 0) {
-            b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
-            b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
-        }
+        groundJump();
     }
 
     public void startPound() {
         setToPound = true;
         //RetroGame.manager.load("audio/sounds/bubblePound.mp3", Sound.class);
-    }
-
-    public void startSplat() {
-        setToSplat = true;
     }
 
     public void poundCheck() {
@@ -482,60 +477,88 @@ public class Blobb extends Sprite {
         }
     }
 
-    public void startSlide() {
-        System.err.println("startSlide() method called");
-        setToSlide = true;
+    public void startSplat() {
+        setToSplat = true;
     }
 
-    public void slideCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.DOWN) || !touchingWall) {
-            setToSlide = false;
-            System.err.println("slideCheck just failed");
-            b2Body.setGravityScale(1);
-        } else {
-            b2Body.setLinearVelocity(0, -0.5f);
-        }
+    public void splatCheck() {
     }
 
     public void startFloat() {
         setToFloat = true;
+        b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
+        b2Body.applyLinearImpulse(new Vector2(0, 1), b2Body.getWorldCenter(), true);
         //RetroGame.manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
     }
 
     public void floatCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.S) || b2Body.getLinearVelocity().y == 0 || stateTimer > 3) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.H) || stateTimer > 3) {
             setToFloat = false;
             b2Body.setGravityScale(1);
+            if (stateTimer > 3)
+                canFloat = false;
+            else
+                canFloat = true;
             //if (stateTimer > 3)
                 //RetroGame.manager.load("audio/sounds/bubblePop.mp3", Sound.class);
 
             //else
                 //RetroGame.manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
         }
-
         else {
-            b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
-            b2Body.setGravityScale(-1f);
+            b2Body.setGravityScale(0.1f);
+        }
+    }
+
+    public void startSlide() {
+        if (touchingWall)
+            setToSlide = true;
+        else
+            setToSlide = false;
+    }
+
+    public void slideCheck() {
+        if (!touchingWall || feetOnGround) {
+            setToSlide = false;
+            b2Body.setGravityScale(1);
+        } else {
+            b2Body.setLinearVelocity(0, -0.5f);
         }
     }
 
     public void startGrab() {
-        System.err.println("Starting grab");
         setToGrab = true;
     }
 
     public void grabCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.D) || !touchingWall) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.K)) {
             setToGrab = false;
             b2Body.setGravityScale(1);
-            System.out.println("Ending Grab");
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            setToSlide = true;
-            setToGrab = false;
         }
-
         else {
             b2Body.setLinearVelocity(0,0);
+            b2Body.setGravityScale(0);
+        }
+    }
+
+    public void startDash() {
+        setToDash = true;
+        b2Body.setLinearVelocity(0,0);
+        b2Body.setGravityScale(0);
+        if (Gdx.input.isKeyPressed(Input.Keys.A))
+            b2Body.applyLinearImpulse(new Vector2(-2, 0), b2Body.getWorldCenter(), true);
+        else if (Gdx.input.isKeyPressed(Input.Keys.D))
+            b2Body.applyLinearImpulse(new Vector2(2, 0), b2Body.getWorldCenter(), true);
+    }
+
+    public void dashCheck() {
+        if (BlobbDash.isAnimationFinished(stateTimer)) {
+            b2Body.setGravityScale(1);
+            b2Body.setLinearVelocity(0,0);
+            setToDash = false;
+            canDash = false;
+        }
+        else {
             b2Body.setGravityScale(0);
         }
     }
@@ -545,9 +568,10 @@ public class Blobb extends Sprite {
      Currently written so jump height mirrors fall height
      */
     public void buttBounce() {
-//        b2Body.applyLinearImpulse(new Vector2(0, 4f), b2Body.getWorldCenter(), true);
-        float vy = (b2Body.getLinearVelocity().y * -1) + .5f;
-        b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, vy);
+        clearMovementFlags();
+        b2Body.applyLinearImpulse(new Vector2(0, 4f), b2Body.getWorldCenter(), true);
+        // float vy = (b2Body.getLinearVelocity().y * -1) + .5f;
+        // b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, vy);
     }
 
     public void clearMovementFlags() {
@@ -557,11 +581,19 @@ public class Blobb extends Sprite {
         setToGrab = false;
         setToSlide = false;
         setToButtBounce = false;
+        setToDash = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        return (setToFloat || setToPound || setToSplat || setToGrab || setToButtBounce);
+        return (setToFloat || setToPound || setToSplat || setToGrab || setToDash || setToSlide);
+    }
+
+    public void trampolineBounce() {
+        if (b2Body.getLinearVelocity().y <= 0) {
+            b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
+            b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
+        }
     }
 
     public void die() {
