@@ -1,10 +1,13 @@
 package com.team.retrogame;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.team.retrogame.Screens.PlayScreen;
 
 /**
@@ -32,19 +35,25 @@ public class RetroGame extends Game {
     public static final short GROUND_BIT = 1;
 	public static final short WALL_BIT = 2;
 	public static final short BLOBB_BIT = 4;
-	public static final short SPIKE_BIT = 8;
-	public static final short TRAMPOLINE_BIT = 16;
-	public static final short ONE_WAY_PLATFORM_BIT = 32;
-	public static final short CRUMBLE_PLATFORM_BIT = 64;
-	public static final short GOAL_BIT = 128;
-
-
+	public static final short BLOBB_FEET_BIT = 8;
+	public static final short BLOBB_HEAD_BIT = 16;
+	public static final short BLOBB_LEFT_BIT = 32;
+	public static final short BLOBB_RIGHT_BIT = 64;
+	public static final short SPIKE_BIT = 128;
+	public static final short TRAMPOLINE_BIT = 256;
+	public static final short ONE_WAY_PLATFORM_BIT = 512;
+	public static final short CRUMBLE_PLATFORM_BIT = 1024;
+	public static final short GOAL_BIT = 2048;
 
 	//Universal SpriteBatch. All sprites contained, and passed around by this one instance
 	public SpriteBatch batch;
 
 	//Universal AssetManager. All assets contained, and passed around by this one instance
 	public static AssetManager manager;
+
+	//Shader stuff
+	private String vertShader, fragShader;
+	public ShaderProgram shaderProgram;
 
 	/*
 	Create SpriteBatch and AssetManager. Load manager with sounds and music. Set Beginning
@@ -55,6 +64,15 @@ public class RetroGame extends Game {
 		batch = new SpriteBatch();
 		manager = new AssetManager();
 		manager.load("audio/music/iwishthiswasundertale.mp3", Music.class);
+
+		//Find the vertex/fragment shaders,start running a shader program utilizing both.
+		vertShader = Gdx.files.internal("Shaders/levelVertex.glsl").readString();
+		fragShader = Gdx.files.internal("Shaders/levelFragment.glsl").readString();
+		shaderProgram = new ShaderProgram(vertShader, fragShader);
+		//Allows the shader program to run without using every uniform.
+		shaderProgram.pedantic = false;
+
+
 		/*
 		manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
 		manager.load("audio/sounds/bubbleLand.mp3", Sound.class);
@@ -68,7 +86,7 @@ public class RetroGame extends Game {
 		manager.load("audio/sounds/spring.mp3", Sound.class);
 		*/
 		manager.finishLoading();
-		setScreen(new PlayScreen(this, "tiled/module_two.tmx"));
+		setScreen(new PlayScreen(this, "tiled/module_eight.tmx"));
 	}
 
 	//dispose of resources

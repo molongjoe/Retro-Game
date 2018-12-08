@@ -22,6 +22,7 @@ import com.team.retrogame.Tools.B2WorldCreator;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
 import java.util.*;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 /**
  * created by Ben Mankin on 09/13/18.
@@ -66,16 +67,15 @@ public class PlayScreen implements Screen {
     private LinkedList<String> levelModules = new LinkedList<String>(){
         {
             add("tiled/module_one.tmx");
-            add("tiled/module_two.tmx");
+            add("tiled/module_eight.tmx");
             add("tiled/module_three.tmx");
             add("tiled/module_four.tmx");
             add("tiled/module_five.tmx");
             add("tiled/module_six.tmx");
+            add("tiled/module_seven.tmx");
+            add("tiled/module_eight.tmx");
         }
     };
-
-
-
 
     public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
@@ -234,9 +234,12 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         //render the Box2DDebugLines
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
+        game.batch.setShader(game.shaderProgram);
+
+
         game.batch.begin();
         player.draw(game.batch);
         game.batch.end();
@@ -314,7 +317,6 @@ public class PlayScreen implements Screen {
 
     @Override
     public void hide() {
-
     }
 
     @Override
