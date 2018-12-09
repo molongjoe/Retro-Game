@@ -2,11 +2,7 @@ package com.team.retrogame.Tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.*;
 import com.team.retrogame.RetroGame;
 import com.team.retrogame.Sprites.Blobb;
 
@@ -79,17 +75,6 @@ public class WorldContactListener implements ContactListener {
                     ((Blobb) fixB.getUserData()).trampolineBounce();
                 break;
 
-                /*
-            //Blobb hits the ground while holding bounce button
-            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.GROUND_BIT:
-                if (!Gdx.input.isKeyPressed(Input.Keys.F)) break;
-                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
-                    ((Blobb) fixA.getUserData()).buttBounce();
-                else
-                    ((Blobb) fixB.getUserData()).buttBounce();
-                break;
-                */
-            }
 
 
             /*
@@ -102,15 +87,27 @@ public class WorldContactListener implements ContactListener {
                 break;
             }*/
 
-            /*
-            //Blobb collides with one way platform
-            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.ONE_WAY_PLATFORM_BIT:
-                if (fixA.getFilterData().categoryBits == RetroGame.ONE_WAY_PLATFORM_BIT)
-                    ((Platform) fixA.getUserData()).checkStandable();
-                else
-                    ((Platform) fixB.getUserData()).checkStandable();
+
+            //Blobb collides from above with a platform that is deactivated. Turn it on. Otherwise, leave it off (do nothing)
+            case RetroGame.BLOBB_FEET_BIT | RetroGame.PLATFORM_OFF_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT) {
+                    if (fixA.getBody().getLinearVelocity().y <= 0) {
+                        Filter filter = new Filter();
+                        filter.maskBits = RetroGame.PLATFORM_ON_BIT;
+                        fixB.setFilterData(filter);
+                    }
+                }
+                else {
+                    if (fixB.getBody().getLinearVelocity().y <= 0) {
+                        Filter filter = new Filter();
+                        filter.maskBits = RetroGame.PLATFORM_ON_BIT;
+                        fixA.setFilterData(filter);
+                    }
+                }
                 break;
-            }*/
+
+
+            }
 
             /*
             //Blobb collides with crumble platform
@@ -169,6 +166,19 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).onRightWall = false;
                 break;
+            //Blobb has ended collision with a platform that was activated. Turn off the one way platform
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.PLATFORM_ON_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT) {
+                    Filter filter = new Filter();
+                    filter.maskBits = RetroGame.PLATFORM_OFF_BIT;
+                    fixB.setFilterData(filter);
+                }
+                else {
+                    Filter filter = new Filter();
+                    filter.maskBits = RetroGame.PLATFORM_OFF_BIT;
+                    fixA.setFilterData(filter);
+                }
+
 
             /*
             //Blobb has ended collision with a one way platform

@@ -307,10 +307,9 @@ public class Blobb extends Sprite {
         //Set what Blobb can collide with
         fdef.filter.categoryBits = RetroGame.BLOBB_GENERAL_BIT;
         fdef.filter.maskBits = RetroGame.GROUND_BIT |
-                RetroGame.WALL_BIT |
                 RetroGame.SPIKE_BIT |
                 RetroGame.TRAMPOLINE_BIT |
-                RetroGame.ONE_WAY_PLATFORM_BIT |
+                RetroGame.PLATFORM_ON_BIT |
                 RetroGame.CRUMBLE_PLATFORM_BIT |
                 RetroGame.GOAL_BIT;
         fdef.shape = shape;
@@ -331,6 +330,13 @@ public class Blobb extends Sprite {
         fdef.filter.categoryBits = RetroGame.BLOBB_FEET_BIT;
         fdef.shape = feet;
         fdef.isSensor = true;
+        fdef.filter.maskBits = RetroGame.GROUND_BIT |
+                RetroGame.SPIKE_BIT |
+                RetroGame.TRAMPOLINE_BIT |
+                RetroGame.PLATFORM_OFF_BIT |
+                RetroGame.PLATFORM_ON_BIT |
+                RetroGame.CRUMBLE_PLATFORM_BIT |
+                RetroGame.GOAL_BIT;
         b2Body.createFixture(fdef).setUserData(this);
 
         //Give Blobb an edge to serve as his left
@@ -562,7 +568,7 @@ public class Blobb extends Sprite {
                 //RetroGame.manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
         }
         else {
-            b2Body.setGravityScale(0.1f);
+            b2Body.setGravityScale(-1);
 
             if (b2Body.getLinearVelocity().x <= -1f)
                 b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, -0.3f);
@@ -665,6 +671,7 @@ public class Blobb extends Sprite {
             clearMovementFlags();
             b2Body.setGravityScale(0.5f);
             b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
+
             b2Body.applyLinearImpulse(new Vector2(0, 4), b2Body.getWorldCenter(), true);
             setToFloat = false;
         }

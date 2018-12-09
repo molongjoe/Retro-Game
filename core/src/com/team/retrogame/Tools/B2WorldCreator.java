@@ -56,7 +56,7 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
 
-        //Create Wall Fixtures
+        //Create Spike Fixtures
         for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
@@ -71,7 +71,7 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
 
-        //Create Spike Fixtures
+        //Create Trampoline Fixtures
         for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
@@ -86,7 +86,7 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
 
-        //Create Trampoline Fixtures
+        //Create One Way Platform Fixtures
         for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
@@ -97,11 +97,11 @@ public class B2WorldCreator {
 
             shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
             fdef.shape = shape;
-            fdef.filter.categoryBits = RetroGame.ONE_WAY_PLATFORM_BIT;
+            fdef.filter.categoryBits = RetroGame.PLATFORM_ON_BIT;
             body.createFixture(fdef);
         }
 
-        //Create One Way Platform Fixtures
+        //Create Crumble Platform Fixtures
         for (MapObject object : map.getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
