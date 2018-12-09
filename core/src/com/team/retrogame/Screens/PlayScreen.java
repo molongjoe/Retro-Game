@@ -22,6 +22,7 @@ import com.team.retrogame.Tools.B2WorldCreator;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
 import java.util.*;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 /**
  * created by Ben Mankin on 09/13/18.
@@ -75,9 +76,6 @@ public class PlayScreen implements Screen {
             add("tiled/module_eight.tmx");
         }
     };
-
-
-
 
     public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
@@ -142,7 +140,6 @@ public class PlayScreen implements Screen {
         if(player.currentState != Blobb.State.DEAD) {
             //if game isn't paused and player isn't performing a special action, these inputs are valid
             if(setToResume || !setToPause) {
-
                 //if player is standing or running
                 if(player.currentState == Blobb.State.STANDING || player.currentState == Blobb.State.RUNNING) {
                     player.canFloat = true;
@@ -153,6 +150,8 @@ public class PlayScreen implements Screen {
                         player.moveRightGround();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.groundJump();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                        player.startFloat();
                 }
 
                 //if player is jumping or falling
@@ -173,6 +172,12 @@ public class PlayScreen implements Screen {
 
                 //if player is dashing
                 if(player.currentState == Blobb.State.DASHING) {
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                        player.startFloat();
+                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                        player.startPound();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
+                        player.startGrab();
                 }
 
                 //if player is floating
@@ -181,6 +186,10 @@ public class PlayScreen implements Screen {
                         player.moveLeftFloat();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightFloat();
+                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                        player.startPound();
+                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
+                        player.startDash();
                     if (Gdx.input.isKeyPressed(Input.Keys.K))
                         player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
@@ -205,6 +214,12 @@ public class PlayScreen implements Screen {
                         player.moveLeftSlide();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightSlide();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                        player.startFloat();
+                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
+                        player.startDash();
+                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                        player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.L))
                         player.startGrab();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
@@ -213,6 +228,12 @@ public class PlayScreen implements Screen {
 
                 //if player is grabbing
                 if(player.currentState == Blobb.State.GRABBING) {
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                        player.startFloat();
+                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
+                        player.startDash();
+                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                        player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.wallJump();
                 }
@@ -271,6 +292,9 @@ public class PlayScreen implements Screen {
         //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
+        game.batch.setShader(game.shaderProgram);
+
+
         game.batch.begin();
         player.draw(game.batch);
         game.batch.end();
