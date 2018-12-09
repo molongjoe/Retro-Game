@@ -634,6 +634,8 @@ public class Blobb extends Sprite {
         if (b2Body.getLinearVelocity().y <= 0) {
             b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
             b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
+            setToFloat = false;
+            b2Body.setGravityScale(1);
         }
     }
 
