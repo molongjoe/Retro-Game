@@ -33,7 +33,7 @@
 135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135
 </data>
  </layer>
- <layer id="11" name="Upper Background" width="40" height="22">
+ <layer id="11" name="Upper Background" width="40" height="22" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -145,9 +145,9 @@
   <object id="32" x="480" y="96" width="64" height="32"/>
   <object id="33" x="128" y="0" width="512" height="16"/>
  </objectgroup>
- <objectgroup id="5" name="Spikes"/>
- <objectgroup id="6" name="Trampolines"/>
- <objectgroup id="7" name="One Way Platforms"/>
- <objectgroup id="8" name="Crumble Platforms"/>
+ <objectgroup id="5" name="Spikes" visible="0"/>
+ <objectgroup id="6" name="Trampolines" visible="0"/>
+ <objectgroup id="7" name="One Way Platforms" visible="0"/>
+ <objectgroup id="8" name="Crumble Platforms" visible="0"/>
  <objectgroup id="9" name="Goal" visible="0"/>
 </map>
