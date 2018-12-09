@@ -167,6 +167,8 @@ public class PlayScreen implements Screen {
                         player.startDash();
                     if (Gdx.input.isKeyPressed(Input.Keys.K))
                         player.startPound();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
+                        player.startGrab();
                 }
 
                 //if player is dashing
@@ -181,6 +183,8 @@ public class PlayScreen implements Screen {
                         player.moveRightFloat();
                     if (Gdx.input.isKeyPressed(Input.Keys.K))
                         player.startPound();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
+                        player.startGrab();
                 }
 
                 //if player is pounding
@@ -201,39 +205,17 @@ public class PlayScreen implements Screen {
                         player.moveLeftSlide();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightSlide();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.L))
+                        player.startGrab();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+                        player.wallJump();
                 }
 
                 //if player is grabbing
                 if(player.currentState == Blobb.State.GRABBING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.A))
-                        player.leftGrab();
-                    if (Gdx.input.isKeyPressed(Input.Keys.D))
-                        player.rightGrab();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+                        player.wallJump();
                 }
-
-
-                // Implementation of bounce: player falling normally sets setToButtBounce. At contact with ground
-                // call bounce() function. No need to check setToButtBounce, since clearMovementFlags wipes it out every frame.
-                //if (Gdx.input.isKeyPressed(Input.Keys.F) && (player.b2Body.getLinearVelocity().y < 0)) {
-                //player.setToButtBounce = true;
-                // }
-                // Detect D just released
-                // if (!Gdx.input.isKeyPressed(Input.Keys.D) && (player.currentState == Blobb.State.GRABBING)) {
-                //if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
-                //Gdx.input.isKeyPressed(Input.Keys.UP)) { // Trying to walljump
-                //     player.wallJump();
-                //}
-                //}
-
-                // Slding
-                //if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
-                    // Keep inner block for readability in case other behaviors use down key.
-                //if(player.currentState == Blobb.State.GRABBING ){
-                //   System.err.println("Trying to call startSlide()");
-                //  player.startSlide();
-                //}
-                //}
-
 
                 //pause and unpause functionality
                 if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
@@ -286,7 +268,7 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         //render the Box2DDebugLines
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
