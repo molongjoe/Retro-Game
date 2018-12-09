@@ -56,6 +56,7 @@ public class Blobb extends Sprite {
 
     //behavioral checks
     private float stateTimer;
+    private float floatTimer;
     private boolean facingRight;
     public boolean touchingWall;
     public boolean feetOnGround;
@@ -65,6 +66,7 @@ public class Blobb extends Sprite {
     public boolean canSlide;
     public boolean canFloat = true;
     public boolean canDash = true;
+    public boolean initialFloat = true;
 
     public boolean setToPound = false;
     public boolean setToFloat = false;
@@ -190,6 +192,9 @@ public class Blobb extends Sprite {
         //if he's touching a left or right boundary, he's touching a wall
         touchingWall = onLeftWall || onRightWall;
 
+        //if the blobb has landed, the float properties have been reset
+        if (feetOnGround)
+            initialFloat = true;
 
         System.out.println("feet: " + feetOnGround + " " +
                 "head: " + headOnCeiling + " " +
@@ -233,7 +238,7 @@ public class Blobb extends Sprite {
                 break;
             case FLOATING:
                 region = BlobbFloat.getKeyFrame(stateTimer, false);
-                floatCheck();
+                floatCheck(floatTimer);
                 break;
             case GRABBING:
                 region = BlobbGrab.getKeyFrame(stateTimer, false);
@@ -260,18 +265,18 @@ public class Blobb extends Sprite {
         }
 
         //if Blobb is moving right and the texture isnt facing right... flip it.
-        else if((b2Body.getLinearVelocity().x > 0 || facingRight) && region.isFlipX()) {
+        else if ((b2Body.getLinearVelocity().x > 0 || facingRight) && region.isFlipX()) {
             region.flip(true, false);
             facingRight = true;
         }
 
-        //if Blobb is grabbing right and the texture isnt facing right... flip it.
-        if (setToGrab && onRightWall && region.isFlipX())
-            region.flip(true, false);
 
         //if the current state is the same as the previous state increase the state timer.
         //otherwise the state has changed and the timer needs to be reset
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
+
+        //floatTimer uses the delta time to find if the float duration has exceeded the threshold
+        floatTimer += dt;
 
         //update previous state
         previousState = currentState;
@@ -516,16 +521,23 @@ public class Blobb extends Sprite {
     public void startFloat() {
         setToFloat = true;
         b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
-        b2Body.applyLinearImpulse(new Vector2(0, 1), b2Body.getWorldCenter(), true);
+
+        //on initial float, give an upwards impulse and begin the float timer
+        if (initialFloat) {
+            b2Body.applyLinearImpulse(new Vector2(0, 1), b2Body.getWorldCenter(), true);
+            initialFloat = false;
+            floatTimer = 0;
+        }
         //RetroGame.manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
     }
 
-    public void floatCheck() {
+    public void floatCheck(float floatTimer) {
         //if key isn't pressed or timer is exceeded threshold or the player is on the ground or set to grab
-        if (!Gdx.input.isKeyPressed(Input.Keys.H) || stateTimer > 3 || (feetOnGround && b2Body.getLinearVelocity().y == 0) || setToGrab) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.H) || floatTimer > 3 || (feetOnGround && b2Body.getLinearVelocity().y == 0) || setToGrab) {
             setToFloat = false;
             b2Body.setGravityScale(1);
-            if (stateTimer > 3)
+
+            if (floatTimer > 3)
                 canFloat = false;
             else
                 canFloat = true;
@@ -546,7 +558,7 @@ public class Blobb extends Sprite {
 
     public void slideCheck() {
         //if not touching a wall or on the ground or set to grab, no more sliding
-        if (!touchingWall || feetOnGround || setToGrab)
+        if (!touchingWall || feetOnGround || setToGrab || !canSlide)
             setToSlide = false;
     }
 
