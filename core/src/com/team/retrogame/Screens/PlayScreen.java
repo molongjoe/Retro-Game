@@ -140,7 +140,6 @@ public class PlayScreen implements Screen {
         if(player.currentState != Blobb.State.DEAD) {
             //if game isn't paused and player isn't performing a special action, these inputs are valid
             if(setToResume || !setToPause) {
-
                 //if player is standing or running
                 if(player.currentState == Blobb.State.STANDING || player.currentState == Blobb.State.RUNNING) {
                     player.canFloat = true;
@@ -151,6 +150,8 @@ public class PlayScreen implements Screen {
                         player.moveRightGround();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.groundJump();
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                        player.startFloat();
                 }
 
                 //if player is jumping or falling

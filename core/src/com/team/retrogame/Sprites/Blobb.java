@@ -67,6 +67,7 @@ public class Blobb extends Sprite {
     public boolean canFloat = true;
     public boolean canDash = true;
     public boolean initialFloat = true;
+    public float buttBounceHeight = 0;
 
     public boolean setToPound = false;
     public boolean setToFloat = false;
@@ -354,8 +355,7 @@ public class Blobb extends Sprite {
             //if touching a wall in midair or was Grabbing and still falling, start slide
              if ((touchingWall && !feetOnGround && b2Body.getLinearVelocity().y != 0) || (previousState == State.GRABBING && !feetOnGround) && canSlide) {
                  startSlide();
-                 return State.SLIDING;
-             }
+                 return State.SLIDING; }
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
             else if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && (previousState == State.JUMPING)))
                 return State.JUMPING;
@@ -365,8 +365,7 @@ public class Blobb extends Sprite {
                 //if Blobb is positive or negative in the X axis he is running
             else if (b2Body.getLinearVelocity().x != 0 && b2Body.getLinearVelocity().y == 0) {
                 //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
-                return State.RUNNING;
-            }
+                return State.RUNNING; }
             //default him standing
             else {
                 clearMovementFlags();
@@ -378,7 +377,7 @@ public class Blobb extends Sprite {
             //if pounding
             if (setToPound) {
                 //if he has landed and the pound is finished, he is now splatting
-                if (b2Body.getGravityScale() == 1 && feetOnGround) {
+                if (b2Body.getGravityScale() == 0.8f && feetOnGround) {
                     setToPound = false;
                     startSplat();
                     //RetroGame.manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
@@ -441,13 +440,13 @@ public class Blobb extends Sprite {
 
     public void moveLeftFloat() {
         //put a cap on left air movement speed (same as ground for now)
-        if (b2Body.getLinearVelocity().x >= -1)
+        if (b2Body.getLinearVelocity().x >= -0.5f)
             b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
     public void moveRightFloat() {
         //put a cap on right air movement speed (same as ground for now)
-        if (b2Body.getLinearVelocity().x <= 1)
+        if (b2Body.getLinearVelocity().x <= 0.5f)
             b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
@@ -497,18 +496,21 @@ public class Blobb extends Sprite {
 
         //revert state to normal
         clearMovementFlags();
-        b2Body.setGravityScale(1);
+        b2Body.setGravityScale(0.8f);
     }
 
     public void startPound() {
         clearMovementFlags();
         setToPound = true;
+
+        buttBounceHeight = b2Body.getPosition().y * 4;
+        System.out.println(buttBounceHeight);
         //RetroGame.manager.load("audio/sounds/bubblePound.mp3", Sound.class);
     }
 
     public void poundCheck() {
         if (BlobbPound.isAnimationFinished(stateTimer)) {
-            b2Body.setGravityScale(1);
+            b2Body.setGravityScale(0.8f);
             b2Body.applyLinearImpulse(new Vector2(0, -.3f), b2Body.getWorldCenter(), true);
         }
         else {
@@ -533,7 +535,7 @@ public class Blobb extends Sprite {
 
         //on initial float, give an upwards impulse and begin the float timer
         if (initialFloat) {
-            b2Body.applyLinearImpulse(new Vector2(0, 1), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(0, 0.7f), b2Body.getWorldCenter(), true);
             initialFloat = false;
             floatTimer = 0;
         }
@@ -542,11 +544,11 @@ public class Blobb extends Sprite {
 
     public void floatCheck(float floatTimer) {
         //if key isn't pressed or timer is exceeded threshold or the player is on the ground or set to grab
-        if (!Gdx.input.isKeyPressed(Input.Keys.H) || floatTimer > 3 || (feetOnGround && b2Body.getLinearVelocity().y == 0) || setToGrab) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.H) || floatTimer > 5 || (feetOnGround && b2Body.getLinearVelocity().y == 0) || setToGrab) {
             setToFloat = false;
-            b2Body.setGravityScale(1);
+            b2Body.setGravityScale(0.8f);
 
-            if (floatTimer > 3)
+            if (floatTimer > 5)
                 canFloat = false;
             else
                 canFloat = true;
@@ -558,6 +560,11 @@ public class Blobb extends Sprite {
         }
         else {
             b2Body.setGravityScale(0.1f);
+
+            if (b2Body.getLinearVelocity().x <= -1f)
+                b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, -0.3f);
+            if (b2Body.getLinearVelocity().y <= -0.3f)
+                b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, -0.3f);
         }
     }
 
@@ -581,7 +588,7 @@ public class Blobb extends Sprite {
         //if not pressing the grab key or not touching wall, grab ends
         if ((!Gdx.input.isKeyPressed(Input.Keys.L)) || !touchingWall) {
             setToGrab = false;
-            b2Body.setGravityScale(1);
+            b2Body.setGravityScale(0.8f);
             b2Body.setLinearVelocity(0,-0.1f);
         }
         else {
@@ -606,7 +613,7 @@ public class Blobb extends Sprite {
     public void dashCheck() {
         //if dash animation is finished, set state back to normal
         if (BlobbDash.isAnimationFinished(stateTimer)) {
-            b2Body.setGravityScale(1);
+            b2Body.setGravityScale(0.8f);
             b2Body.setLinearVelocity(0,0);
             setToDash = false;
             canDash = false;
@@ -622,9 +629,8 @@ public class Blobb extends Sprite {
      */
     public void buttBounce() {
         clearMovementFlags();
-        b2Body.applyLinearImpulse(new Vector2(0, 4f), b2Body.getWorldCenter(), true);
-        // float vy = (b2Body.getLinearVelocity().y * -1) + .5f;
-        // b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, vy);
+        //buttBounceHeight += 1;
+        b2Body.applyLinearImpulse(new Vector2(b2Body.getLinearVelocity().x, buttBounceHeight), b2Body.getWorldCenter(), true);
     }
 
     public void clearMovementFlags() {
@@ -645,7 +651,7 @@ public class Blobb extends Sprite {
     public void trampolineBounce() {
         if (b2Body.getLinearVelocity().y <= 0) {
             clearMovementFlags();
-            b2Body.setGravityScale(1);
+            b2Body.setGravityScale(0.8f);
             b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
             b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
         }
