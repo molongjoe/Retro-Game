@@ -56,12 +56,13 @@ public class Blobb extends Sprite {
 
     //behavioral checks
     private float stateTimer;
-    private boolean runningRight;
+    private boolean facingRight;
     public boolean touchingWall;
     public boolean feetOnGround;
     public boolean headOnCeiling;
     public boolean onLeftWall;
     public boolean onRightWall;
+    public boolean canSlide;
     public boolean canFloat = true;
     public boolean canDash = true;
 
@@ -80,7 +81,7 @@ public class Blobb extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
-        runningRight = true;
+        facingRight = true;
 
         //Make Texture Regions representing different frames that we will
         //use for animation later
@@ -188,12 +189,16 @@ public class Blobb extends Sprite {
 
         //if he's touching a left or right boundary, he's touching a wall
         touchingWall = onLeftWall || onRightWall;
+
+
         System.out.println("feet: " + feetOnGround + " " +
                 "head: " + headOnCeiling + " " +
                 "left: " + onLeftWall + " " +
                 "right: " + onRightWall);
 
         System.out.println(currentState);
+
+
     }
 
 
@@ -248,16 +253,16 @@ public class Blobb extends Sprite {
                 break;
         }
 
-        //if Blobb is running left and the texture isn't facing left... flip it.
-        if ((b2Body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
+        //if Blobb is moving left and the texture isn't facing left... flip it.
+        if ((b2Body.getLinearVelocity().x < 0 || !facingRight) && !region.isFlipX()) {
             region.flip(true, false);
-            runningRight = false;
+            facingRight = false;
         }
 
-        //if Blobb is running right and the texture isnt facing right... flip it.
-        else if((b2Body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX()) {
+        //if Blobb is moving right and the texture isnt facing right... flip it.
+        else if((b2Body.getLinearVelocity().x > 0 || facingRight) && region.isFlipX()) {
             region.flip(true, false);
-            runningRight = true;
+            facingRight = true;
         }
 
         //if Blobb is grabbing right and the texture isnt facing right... flip it.
@@ -303,7 +308,7 @@ public class Blobb extends Sprite {
 
         //Give Blobb an edge to serve as his head
         EdgeShape head = new EdgeShape();
-        head.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM));
+        head.set(new Vector2(-4 / RetroGame.PPM, 7.2f / RetroGame.PPM), new Vector2(4 / RetroGame.PPM, 7.2f / RetroGame.PPM));
         fdef.filter.categoryBits = RetroGame.BLOBB_HEAD_BIT;
         fdef.shape = head;
         fdef.isSensor = true;
@@ -311,7 +316,7 @@ public class Blobb extends Sprite {
 
         //Give Blobb an edge to serve as his feet
         EdgeShape feet = new EdgeShape();
-        feet.set(new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
+        feet.set(new Vector2(-4 / RetroGame.PPM, -7.2f / RetroGame.PPM), new Vector2(4 / RetroGame.PPM, -7.2f / RetroGame.PPM));
         fdef.filter.categoryBits = RetroGame.BLOBB_FEET_BIT;
         fdef.shape = feet;
         fdef.isSensor = true;
@@ -319,7 +324,7 @@ public class Blobb extends Sprite {
 
         //Give Blobb an edge to serve as his left
         EdgeShape left = new EdgeShape();
-        left.set(new Vector2(-5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(-5 / RetroGame.PPM, -7 / RetroGame.PPM));
+        left.set(new Vector2(-5.2f / RetroGame.PPM, 6 / RetroGame.PPM), new Vector2(-5.2f / RetroGame.PPM, -6 / RetroGame.PPM));
         fdef.filter.categoryBits = RetroGame.BLOBB_LEFT_BIT;
         fdef.shape = left;
         fdef.isSensor = true;
@@ -327,7 +332,7 @@ public class Blobb extends Sprite {
 
         //Give Blobb an edge to serve as his right
         EdgeShape right = new EdgeShape();
-        right.set(new Vector2(5 / RetroGame.PPM, 7 / RetroGame.PPM), new Vector2(5 / RetroGame.PPM, -7 / RetroGame.PPM));
+        right.set(new Vector2(5.2f / RetroGame.PPM, 6 / RetroGame.PPM), new Vector2(5.2f / RetroGame.PPM, 6 / RetroGame.PPM));
         fdef.filter.categoryBits = RetroGame.BLOBB_RIGHT_BIT;
         fdef.shape = right;
         fdef.isSensor = true;
@@ -335,13 +340,17 @@ public class Blobb extends Sprite {
     }
 
     private State getState(){
-
         if (!specialMovement()) {
+            //if touching a wall in midair or was Grabbing and still falling, start slide
+             if ((touchingWall && !feetOnGround && b2Body.getLinearVelocity().y != 0) || (previousState == State.GRABBING && !feetOnGround) && canSlide) {
+                 startSlide();
+                 return State.SLIDING;
+             }
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
-            if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && (previousState == State.JUMPING || previousState == State.DASHING)))
+            else if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && (previousState == State.JUMPING)))
                 return State.JUMPING;
-                //if negative in Y-Axis and was standing, or was falling, Blobb is falling
-            else if ((b2Body.getLinearVelocity().y < 0 && (previousState == State.STANDING || previousState == State.FLOATING))) // TODO: create setToFall flag to force falling even after no jump
+                //if negative in Y-Axis and was standing, floating, or falling, Blobb is falling
+            else if ((b2Body.getLinearVelocity().y < 0 && (previousState == State.STANDING || previousState == State.FLOATING || previousState == State.FALLING || previousState == State.DASHING)))
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
             else if (b2Body.getLinearVelocity().x != 0 && b2Body.getLinearVelocity().y == 0) {
@@ -361,7 +370,7 @@ public class Blobb extends Sprite {
                 //if he has landed and the pound is finished, he is now splatting
                 if (b2Body.getGravityScale() == 1 && feetOnGround) {
                     setToPound = false;
-                    setToSplat = true;
+                    startSplat();
                     //RetroGame.manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
                     return State.SPLATTING;
                 }
@@ -376,9 +385,9 @@ public class Blobb extends Sprite {
                     return State.SPLATTING;
             } else if (setToFloat) {
                 return State.FLOATING;
-            } else if (setToSlide || previousState == State.SLIDING) {
+            } else if (setToSlide) {
                 return State.SLIDING;
-            } else if (setToGrab && touchingWall) {
+            } else if (setToGrab) {
                 return State.GRABBING;
             } else if (setToDash) {
                 return State.DASHING;
@@ -444,11 +453,6 @@ public class Blobb extends Sprite {
             b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
-    public void leftGrab() {
-    }
-
-    public void rightGrab() {
-    }
 
     public void groundJump() {
         b2Body.applyLinearImpulse(new Vector2(0, 3.3f), b2Body.getWorldCenter(), true);
@@ -456,9 +460,34 @@ public class Blobb extends Sprite {
     }
 
     public void wallJump() {
-        // TODO: Jump Logic -- get direction facing and apply angular impulse in opposite direction
-//        b2Body.applyAngularImpulse();
-        groundJump();
+        //set velocity to zero to accomodate for impulse
+        b2Body.setLinearVelocity(0,0);
+
+        //take in the modifier keys being input and apply the linear impulse based on the combination and which wall the blobb is on
+        if (Gdx.input.isKeyPressed(Input.Keys.W) && onRightWall)
+            b2Body.applyLinearImpulse(new Vector2(-0.5f, 3), b2Body.getWorldCenter(), true);
+        else if (Gdx.input.isKeyPressed(Input.Keys.W) && onLeftWall)
+            b2Body.applyLinearImpulse(new Vector2(0.5f, 3), b2Body.getWorldCenter(), true);
+
+        else if (Gdx.input.isKeyPressed(Input.Keys.A) && onRightWall)
+            b2Body.applyLinearImpulse(new Vector2(-2, 1), b2Body.getWorldCenter(), true);
+        else if (Gdx.input.isKeyPressed(Input.Keys.D) && onLeftWall)
+            b2Body.applyLinearImpulse(new Vector2(2, 1), b2Body.getWorldCenter(), true);
+
+        else if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.W) && onRightWall)
+            b2Body.applyLinearImpulse(new Vector2(-1.5f, 2), b2Body.getWorldCenter(), true);
+        else if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.W) && onLeftWall)
+            b2Body.applyLinearImpulse(new Vector2(1.5f, 2), b2Body.getWorldCenter(), true);
+
+
+        else if (onRightWall)
+            b2Body.applyLinearImpulse(new Vector2(-1, 1), b2Body.getWorldCenter(), true);
+        else if (onLeftWall)
+            b2Body.applyLinearImpulse(new Vector2(1, 1), b2Body.getWorldCenter(), true);
+
+        //revert state to normal
+        clearMovementFlags();
+        b2Body.setGravityScale(1);
     }
 
     public void startPound() {
@@ -492,7 +521,8 @@ public class Blobb extends Sprite {
     }
 
     public void floatCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.H) || stateTimer > 3) {
+        //if key isn't pressed or timer is exceeded threshold or the player is on the ground or set to grab
+        if (!Gdx.input.isKeyPressed(Input.Keys.H) || stateTimer > 3 || (feetOnGround && b2Body.getLinearVelocity().y == 0) || setToGrab) {
             setToFloat = false;
             b2Body.setGravityScale(1);
             if (stateTimer > 3)
@@ -511,29 +541,26 @@ public class Blobb extends Sprite {
     }
 
     public void startSlide() {
-        if (touchingWall)
-            setToSlide = true;
-        else
-            setToSlide = false;
+        setToSlide = true;
     }
 
     public void slideCheck() {
-        if (!touchingWall || feetOnGround) {
+        //if not touching a wall or on the ground or set to grab, no more sliding
+        if (!touchingWall || feetOnGround || setToGrab)
             setToSlide = false;
-            b2Body.setGravityScale(1);
-        } else {
-            b2Body.setLinearVelocity(0, -0.5f);
-        }
     }
 
     public void startGrab() {
+        setToSlide = false;
         setToGrab = true;
     }
 
     public void grabCheck() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.K)) {
+        //if not pressing the grab key or not touching wall, grab ends
+        if ((!Gdx.input.isKeyPressed(Input.Keys.L)) || !touchingWall) {
             setToGrab = false;
             b2Body.setGravityScale(1);
+            b2Body.setLinearVelocity(0,-0.1f);
         }
         else {
             b2Body.setLinearVelocity(0,0);
@@ -542,16 +569,18 @@ public class Blobb extends Sprite {
     }
 
     public void startDash() {
+        //set gravity to zero and apply linear impulse in that direction
         setToDash = true;
         b2Body.setLinearVelocity(0,0);
         b2Body.setGravityScale(0);
-        if (Gdx.input.isKeyPressed(Input.Keys.A))
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || !facingRight)
             b2Body.applyLinearImpulse(new Vector2(-2, 0), b2Body.getWorldCenter(), true);
-        else if (Gdx.input.isKeyPressed(Input.Keys.D))
+        else if (Gdx.input.isKeyPressed(Input.Keys.D) || facingRight)
             b2Body.applyLinearImpulse(new Vector2(2, 0), b2Body.getWorldCenter(), true);
     }
 
     public void dashCheck() {
+        //if dash animation is finished, set state back to normal
         if (BlobbDash.isAnimationFinished(stateTimer)) {
             b2Body.setGravityScale(1);
             b2Body.setLinearVelocity(0,0);
@@ -579,9 +608,9 @@ public class Blobb extends Sprite {
         setToFloat = false;
         setToSplat = false;
         setToGrab = false;
-        setToSlide = false;
         setToButtBounce = false;
         setToDash = false;
+        setToSlide = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
