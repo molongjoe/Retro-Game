@@ -168,11 +168,16 @@ public class Blobb extends Sprite {
         BlobbDash = new Animation<TextureRegion>(0.05f, dashing_frames);
         dashing_frames.clear();
 
+        //commented out blobbSlide until the animation or physics is fixed
+        /*
         BlobbSlide = new Animation<TextureRegion>(0.1f, sliding_frames);
         sliding_frames.clear();
+        */
 
         //create texture region for Blobb standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
+
+        BlobbSlide = BlobbFall;
 
         //create dead Blobb texture region
         BlobbDead = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 96, 0, 16, 16);
@@ -496,6 +501,7 @@ public class Blobb extends Sprite {
     }
 
     public void startPound() {
+        clearMovementFlags();
         setToPound = true;
         //RetroGame.manager.load("audio/sounds/bubblePound.mp3", Sound.class);
     }
@@ -512,6 +518,7 @@ public class Blobb extends Sprite {
     }
 
     public void startSplat() {
+        clearMovementFlags();
         setToSplat = true;
     }
 
@@ -519,7 +526,9 @@ public class Blobb extends Sprite {
     }
 
     public void startFloat() {
+        clearMovementFlags();
         setToFloat = true;
+
         b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
 
         //on initial float, give an upwards impulse and begin the float timer
@@ -553,6 +562,7 @@ public class Blobb extends Sprite {
     }
 
     public void startSlide() {
+        clearMovementFlags();
         setToSlide = true;
     }
 
@@ -563,7 +573,7 @@ public class Blobb extends Sprite {
     }
 
     public void startGrab() {
-        setToSlide = false;
+        clearMovementFlags();
         setToGrab = true;
     }
 
@@ -582,7 +592,9 @@ public class Blobb extends Sprite {
 
     public void startDash() {
         //set gravity to zero and apply linear impulse in that direction
+        clearMovementFlags();
         setToDash = true;
+
         b2Body.setLinearVelocity(0,0);
         b2Body.setGravityScale(0);
         if (Gdx.input.isKeyPressed(Input.Keys.A) || !facingRight)
@@ -632,6 +644,8 @@ public class Blobb extends Sprite {
 
     public void trampolineBounce() {
         if (b2Body.getLinearVelocity().y <= 0) {
+            clearMovementFlags();
+            b2Body.setGravityScale(1);
             b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, 0);
             b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
         }
