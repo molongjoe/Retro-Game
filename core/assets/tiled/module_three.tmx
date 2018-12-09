@@ -1,7 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="55">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="96">
  <tileset firstgid="1" source="AllSprites.tsx"/>
  <tileset firstgid="197" source="Sparkle.tsx"/>
+ <objectgroup id="5" name="Ground">
+  <object id="55" x="0" y="304" width="64" height="16"/>
+  <object id="56" x="0" y="320" width="48" height="32"/>
+  <object id="57" x="160" y="208" width="48" height="144"/>
+  <object id="58" x="160" y="0" width="48" height="144"/>
+  <object id="59" x="320" y="80" width="48" height="272"/>
+  <object id="60" x="320" y="0" width="48" height="16"/>
+  <object id="61" x="480" y="0" width="48" height="224"/>
+  <object id="62" x="480" y="288" width="48" height="64"/>
+  <object id="63" x="416" y="320" width="16" height="16"/>
+  <object id="64" x="256" y="320" width="16" height="16"/>
+  <object id="65" x="96" y="320" width="16" height="16"/>
+  <object id="66" x="576" y="320" width="16" height="16"/>
+  <object id="67" x="624" y="0" width="16" height="352"/>
+ </objectgroup>
+ <objectgroup id="6" name="Spikes">
+  <object id="73" x="528" y="0" width="16" height="224"/>
+  <object id="74" x="480" y="224" width="48" height="16"/>
+  <object id="75" x="464" y="0" width="16" height="224"/>
+  <object id="76" x="368" y="0" width="16" height="16"/>
+  <object id="77" x="320" y="16" width="48" height="16"/>
+  <object id="78" x="304" y="0" width="16" height="16"/>
+  <object id="79" x="208" y="0" width="16" height="144"/>
+  <object id="80" x="160" y="144" width="48" height="16"/>
+  <object id="81" x="144" y="0" width="16" height="144"/>
+  <object id="82" x="48" y="320" width="16" height="32"/>
+  <object id="83" x="64" y="336" width="96" height="16"/>
+  <object id="84" x="144" y="208" width="16" height="128"/>
+  <object id="85" x="160" y="192" width="48" height="16"/>
+  <object id="86" x="208" y="208" width="16" height="144"/>
+  <object id="87" x="224" y="336" width="80" height="16"/>
+  <object id="88" x="304" y="80" width="16" height="272"/>
+  <object id="89" x="320" y="64" width="48" height="16"/>
+  <object id="90" x="368" y="80" width="16" height="272"/>
+  <object id="91" x="384" y="336" width="80" height="16"/>
+  <object id="92" x="464" y="288" width="16" height="64"/>
+  <object id="93" x="480" y="272" width="48" height="16"/>
+  <object id="94" x="528" y="288" width="16" height="64"/>
+  <object id="95" x="544" y="336" width="80" height="16"/>
+ </objectgroup>
+ <objectgroup id="7" name="Trampolines">
+  <object id="68" x="576" y="304" width="16" height="16"/>
+  <object id="69" x="416" y="304" width="16" height="16"/>
+  <object id="70" x="256" y="304" width="16" height="16"/>
+  <object id="71" x="96" y="304" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="8" name="One Way Platforms"/>
+ <objectgroup id="9" name="Crumble Platforms"/>
+ <objectgroup id="10" name="Goal">
+  <object id="72" x="544" y="0" width="80" height="16"/>
+ </objectgroup>
  <layer id="1" name="Background" width="40" height="22">
   <data encoding="csv">
 135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,
@@ -28,7 +79,7 @@
 135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135,135
 </data>
  </layer>
- <layer id="2" name="Visuals" width="40" height="22">
+ <layer id="2" name="Graphics" width="40" height="22">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,87,1,1,1,117,0,197,0,0,0,87,1,1,1,117,0,197,0,0,0,87,1,1,1,117,127,127,127,127,127,1,
 0,211,0,0,0,0,0,0,0,87,1,1,1,117,0,0,0,0,0,0,90,90,90,0,0,0,0,0,0,87,1,1,1,117,0,0,0,0,0,1,
@@ -54,47 +105,4 @@
 127,127,127,117,15,15,15,15,15,87,1,1,1,117,15,15,15,15,15,87,1,1,1,117,15,15,15,15,15,87,1,1,1,117,15,15,15,15,15,1
 </data>
  </layer>
- <objectgroup id="3" name="Walls">
-  <object id="4" x="160" y="0" width="48" height="144"/>
-  <object id="5" x="160" y="208" width="48" height="144"/>
-  <object id="6" x="320" y="80" width="48" height="272"/>
-  <object id="7" x="320" y="0" width="48" height="16"/>
-  <object id="8" x="480" y="0" width="48" height="224"/>
-  <object id="10" x="480" y="288" width="48" height="64"/>
-  <object id="13" x="624" y="0" width="16" height="352"/>
-  <object id="14" x="576" y="320" width="16" height="16"/>
-  <object id="15" x="416" y="320" width="16" height="16"/>
-  <object id="17" x="256" y="320" width="16" height="16"/>
-  <object id="19" x="96" y="320" width="16" height="16"/>
-  <object id="20" x="0" y="304" width="64" height="16"/>
-  <object id="51" x="576" y="304" width="16" height="20"/>
-  <object id="52" x="416" y="304" width="16" height="20"/>
-  <object id="53" x="256" y="304" width="16" height="20"/>
-  <object id="54" x="96" y="304" width="16" height="20"/>
- </objectgroup>
- <objectgroup id="4" name="Spikies">
-  <object id="23" x="48" y="320" width="16" height="32"/>
-  <object id="24" x="64" y="336" width="80" height="16"/>
-  <object id="25" x="144" y="208" width="16" height="144"/>
-  <object id="26" x="160" y="192" width="48" height="16"/>
-  <object id="27" x="208" y="0" width="16" height="144"/>
-  <object id="28" x="160" y="144" width="48" height="20"/>
-  <object id="29" x="144" y="0" width="16" height="144"/>
-  <object id="32" x="208" y="208" width="16" height="144"/>
-  <object id="34" x="224" y="336" width="80" height="16"/>
-  <object id="35" x="304" y="80" width="16" height="272"/>
-  <object id="37" x="304" y="0" width="16" height="16"/>
-  <object id="38" x="320" y="16" width="48" height="16"/>
-  <object id="39" x="368" y="0" width="16" height="16"/>
-  <object id="40" x="320" y="64" width="48" height="16"/>
-  <object id="41" x="368" y="80" width="16" height="272"/>
-  <object id="42" x="384" y="336" width="80" height="16"/>
-  <object id="43" x="464" y="288" width="16" height="64"/>
-  <object id="45" x="464" y="0" width="16" height="224"/>
-  <object id="46" x="480" y="224" width="48" height="16"/>
-  <object id="47" x="480" y="272" width="48" height="16"/>
-  <object id="48" x="528" y="288" width="16" height="64"/>
-  <object id="49" x="528" y="0" width="16" height="224"/>
-  <object id="50" x="544" y="336" width="80" height="16"/>
- </objectgroup>
 </map>

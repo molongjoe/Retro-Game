@@ -436,37 +436,37 @@ public class Blobb extends Sprite {
     }
 
     public void moveLeftAir() {
-        //put a cap on left air movement speed (same as ground for now)
+        //put a cap on left air movement speed
         if (b2Body.getLinearVelocity().x >= -2)
             b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
     public void moveRightAir() {
-        //put a cap on right air movement speed (same as ground for now)
+        //put a cap on right air movement speed
         if (b2Body.getLinearVelocity().x <= 2)
             b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
     public void moveLeftFloat() {
-        //put a cap on left air movement speed (same as ground for now)
-        if (b2Body.getLinearVelocity().x >= -0.5f)
+        //put a cap on left air movement speed
+        if (b2Body.getLinearVelocity().x >= -0.7f)
             b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
     public void moveRightFloat() {
-        //put a cap on right air movement speed (same as ground for now)
-        if (b2Body.getLinearVelocity().x <= 0.5f)
+        //put a cap on right air movement speed
+        if (b2Body.getLinearVelocity().x <= 0.7f)
             b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
     public void moveLeftSlide() {
-        //put a cap on left air movement speed (same as ground for now)
+        //put a cap on left air movement speed
         if (onRightWall)
             b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
     public void moveRightSlide() {
-        //put a cap on left air movement speed (same as ground for now)
+        //put a cap on left air movement speed
         if (onLeftWall)
             b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
@@ -568,10 +568,8 @@ public class Blobb extends Sprite {
                 //RetroGame.manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
         }
         else {
-            b2Body.setGravityScale(-1);
+            b2Body.setGravityScale(0.1f);
 
-            if (b2Body.getLinearVelocity().x <= -1f)
-                b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, -0.3f);
             if (b2Body.getLinearVelocity().y <= -0.3f)
                 b2Body.setLinearVelocity(b2Body.getLinearVelocity().x, -0.3f);
         }
@@ -674,6 +672,7 @@ public class Blobb extends Sprite {
 
             b2Body.applyLinearImpulse(new Vector2(0, 4), b2Body.getWorldCenter(), true);
             setToFloat = false;
+            initialFloat = true;
         }
     }
 
