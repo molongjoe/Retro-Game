@@ -150,7 +150,7 @@ public class PlayScreen implements Screen {
                         player.moveRightGround();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.groundJump();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
                         player.startFloat();
                 }
 
@@ -160,11 +160,11 @@ public class PlayScreen implements Screen {
                         player.moveLeftAir();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightAir();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
                         player.startFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
                         player.startDash();
-                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
                         player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
                         player.startGrab();
@@ -172,9 +172,9 @@ public class PlayScreen implements Screen {
 
                 //if player is dashing
                 if(player.currentState == Blobb.State.DASHING) {
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
                         player.startFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
                         player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
                         player.startGrab();
@@ -186,11 +186,11 @@ public class PlayScreen implements Screen {
                         player.moveLeftFloat();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
                         player.startPound();
-                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
                         player.startDash();
-                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
                         player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
                         player.startGrab();
@@ -204,7 +204,7 @@ public class PlayScreen implements Screen {
 
                 //if player is splatting
                 if(player.currentState == Blobb.State.SPLATTING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.buttBounce();
                 }
 
@@ -214,11 +214,11 @@ public class PlayScreen implements Screen {
                         player.moveLeftSlide();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightSlide();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
                         player.startFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
                         player.startDash();
-                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
                         player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.L))
                         player.startGrab();
@@ -228,11 +228,11 @@ public class PlayScreen implements Screen {
 
                 //if player is grabbing
                 if(player.currentState == Blobb.State.GRABBING) {
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H) && (player.canFloat))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
                         player.startFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.J) && (player.canDash))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
                         player.startDash();
-                    if (Gdx.input.isKeyPressed(Input.Keys.K))
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
                         player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.wallJump();
