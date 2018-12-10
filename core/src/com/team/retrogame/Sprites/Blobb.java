@@ -77,6 +77,8 @@ public class Blobb extends Sprite {
     public boolean setToButtBounce = false;
     public boolean setToDash = false;
 
+    public boolean floorClear = false;
+
     public Blobb(PlayScreen screen) {
         //initialize default values
         this.screen = screen;
@@ -687,6 +689,10 @@ public class Blobb extends Sprite {
             setToFloat = false;
             initialFloat = true;
         }
+    }
+
+    public boolean isFloorCleared() {
+        return floorClear;
     }
 
     public void die() {

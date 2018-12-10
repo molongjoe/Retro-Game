@@ -21,6 +21,8 @@ import com.team.retrogame.Sprites.Blobb;
 import com.team.retrogame.Tools.B2WorldCreator;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
+
+import java.awt.*;
 import java.util.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
@@ -39,6 +41,7 @@ public class PlayScreen implements Screen {
     private Viewport gamePort;
     private Hud hud;
     private PauseScreen pause;
+    private Point spawnPoint;
 
     //Tiled map variables
     private TmxMapLoader mapLoader;

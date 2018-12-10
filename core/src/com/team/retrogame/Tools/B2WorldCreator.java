@@ -127,7 +127,7 @@ public class B2WorldCreator {
 
             shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
             fdef.shape = shape;
-            fdef.filter.categoryBits = RetroGame.CRUMBLE_PLATFORM_BIT;
+            fdef.filter.categoryBits = RetroGame.GOAL_BIT;
             body.createFixture(fdef);
         }
     }

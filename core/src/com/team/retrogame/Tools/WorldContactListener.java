@@ -78,15 +78,13 @@ public class WorldContactListener implements ContactListener {
 
 
 
-            /*
             //Blobb collides with goal
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.GOAL_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
-                    ((Blobb) fixA.getUserData()).transition();
+                    ((Blobb) fixA.getUserData()).floorClear = true;
                 else
-                    ((Blobb) fixB.getUserData()).transition();
+                    ((Blobb) fixB.getUserData()).floorClear = true;
                 break;
-            }*/
 
 
             //Blobb collides from above with a platform that is deactivated. Turn it on. Otherwise, leave it off (do nothing)
