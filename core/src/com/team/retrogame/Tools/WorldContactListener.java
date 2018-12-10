@@ -95,7 +95,7 @@ public class WorldContactListener implements ContactListener {
                         fixB.setFilterData(filter);
                     }
 
-                    else {
+                    else if (fixA.getBody().getLinearVelocity().y > 0){
                         Filter filter = new Filter();
                         filter.maskBits = RetroGame.NOTHING_BIT;
                         fixB.setFilterData(filter);
@@ -108,7 +108,7 @@ public class WorldContactListener implements ContactListener {
                         fixA.setFilterData(filter);
                     }
 
-                    else {
+                    else if (fixB.getBody().getLinearVelocity().y > 0) {
                         Filter filter = new Filter();
                         filter.maskBits = RetroGame.NOTHING_BIT;
                         fixA.setFilterData(filter);

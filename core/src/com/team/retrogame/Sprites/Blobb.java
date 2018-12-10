@@ -196,7 +196,7 @@ public class Blobb extends Sprite {
         defineBlobb();
 
         //set initial values for Blobbs location, width and height. And initial frame as BlobbStand.
-        setBounds(0, -1, 16 / RetroGame.PPM, 16 / RetroGame.PPM);
+        setBounds(0, -16, 16 / RetroGame.PPM, 16 / RetroGame.PPM);
         setRegion(BlobbStand);
     }
 
@@ -344,13 +344,6 @@ public class Blobb extends Sprite {
         fdef.filter.categoryBits = RetroGame.BLOBB_FEET_BIT;
         fdef.shape = feet;
         fdef.isSensor = true;
-        fdef.filter.maskBits = RetroGame.GROUND_BIT |
-                RetroGame.SPIKE_BIT |
-                RetroGame.TRAMPOLINE_BIT |
-                RetroGame.PLATFORM_OFF_BIT |
-                RetroGame.PLATFORM_ON_BIT |
-                RetroGame.CRUMBLE_PLATFORM_BIT |
-                RetroGame.GOAL_BIT;
         b2Body.createFixture(fdef).setUserData(this);
 
         //Give Blobb an edge to serve as his left
