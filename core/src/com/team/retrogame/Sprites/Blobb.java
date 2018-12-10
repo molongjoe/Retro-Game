@@ -225,7 +225,11 @@ public class Blobb extends Sprite {
 
     }
 
-
+    /**
+     * Call appropriate messages to set Blobb's motion
+     *
+     * @return
+     */
     private TextureRegion getFrame(float dt) {
         //get Blobbs current state. ie. jumping, running, standing...
         currentState = getState();
@@ -364,6 +368,13 @@ public class Blobb extends Sprite {
         b2Body.createFixture(fdef).setUserData(this);
     }
 
+    /**
+     * NOT A PUBLIC ACCESSOR
+     * Use internally. Logic determines character's current state, for use in getFrame.
+     *
+     * To access state, refer to state variables.
+     * @return State to draw in next frame
+     */
     private State getState(){
         if (!specialMovement()) {
             //if touching a wall in midair or was Grabbing and still falling, start slide
@@ -375,8 +386,8 @@ public class Blobb extends Sprite {
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
             else if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && (previousState == State.JUMPING)))
                 return State.JUMPING;
-                //if negative in Y-Axis and was standing, floating, or falling, Blobb is falling
-            else if ((b2Body.getLinearVelocity().y < 0 && (previousState == State.STANDING || previousState == State.FLOATING || previousState == State.FALLING || previousState == State.DASHING || previousState == State.GRABBING)))
+                //if negative in Y-Axis and was standing, floating, or falling, Blobb is falling. Assume no standing->falling transition
+            else if ((b2Body.getLinearVelocity().y <= 0 && ( /* previousState == State.STANDING || */ previousState == State.FLOATING || previousState == State.FALLING || previousState == State.DASHING || previousState == State.GRABBING)))
                 return State.FALLING;
                  //
              else if (b2Body.getGravityScale()==0)
@@ -391,7 +402,7 @@ public class Blobb extends Sprite {
                 clearMovementFlags();
                 return State.STANDING;
             }
-        }
+        } // endif not special movement
 
         else {
             //if pounding

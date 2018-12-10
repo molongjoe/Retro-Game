@@ -163,6 +163,9 @@ public class PlayScreen implements Screen {
 
                 //if player is jumping or falling
                 if(player.currentState == Blobb.State.JUMPING || player.currentState == Blobb.State.FALLING) {
+                    // First check if grabbing while. If so, freeze position with startGrab()
+                    if (Gdx.input.isKeyPressed(Input.Keys.L) && player.touchingWall)
+                        player.startGrab();
                     if (Gdx.input.isKeyPressed(Input.Keys.A))
                         player.moveLeftAir();
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
@@ -173,8 +176,6 @@ public class PlayScreen implements Screen {
                         player.startDash();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.H))
                         player.startPound();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
-                        player.startGrab();
                 }
 
                 //if player is dashing
