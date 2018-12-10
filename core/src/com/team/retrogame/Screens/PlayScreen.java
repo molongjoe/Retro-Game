@@ -4,15 +4,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.team.retrogame.Scenes.Hud;
@@ -21,8 +26,12 @@ import com.team.retrogame.Sprites.Blobb;
 import com.team.retrogame.Tools.B2WorldCreator;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
+
+import java.awt.image.BufferedImage;
 import java.util.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import static com.badlogic.gdx.graphics.GL20.*;
 
 /**
  * created by Ben Mankin on 09/13/18.
@@ -43,7 +52,8 @@ public class PlayScreen implements Screen {
     //Tiled map variables
     private TmxMapLoader mapLoader;
     private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
+    //Changed to public access to apply shader at game creation in RetroGame.java
+    public OrthogonalTiledMapRenderer renderer;
 
     //Box2d variables
     private World world;
@@ -76,6 +86,9 @@ public class PlayScreen implements Screen {
             add("tiled/module_eight.tmx");
         }
     };
+
+    //shader members
+    private ShaderProgram bShader;
 
     public PlayScreen(RetroGame game, String newMap) {
         //helps to locate sprites
@@ -118,6 +131,9 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.setVolume(0.3f);
         music.play();
+
+        //shader initialization
+        bShader = game.batch.getShader();
 
         setToPause = false;
         setToResume = false;
@@ -237,11 +253,17 @@ public class PlayScreen implements Screen {
         //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
-        game.batch.setShader(game.shaderProgram);
+        //Sets the shader for the batch associated with the map renderer
+        game.levelBatch = renderer.getBatch();
+        //game.levelBatch.setShader(bShader);
 
-
+        //Per-frame shader updates have to go between the batch.begin/batch.end pair
         game.batch.begin();
+
+        Color tint = calculateHeightColor();
+        bShader.setUniformf("u_tint", tint);
         player.draw(game.batch);
+
         game.batch.end();
 
         //Set the batch to now draw what the Hud camera sees.
@@ -269,6 +291,30 @@ public class PlayScreen implements Screen {
         if (setToResume) {
             pause.stage.dispose();
         }
+    }
+
+    /* Calculates the tint color to be used in the levelFragment.glsl shader
+       The function has no arguments, so the caller is responsible for ensuring that the
+       heightRatio is being calculated correctly  */
+    private Color calculateHeightColor() {
+        BufferedImage heightMap = game.heightSampler;
+        double heightRatio = (player.totalHeight / player.MODULE_HEIGHT);
+        int index = (int)Math.floor(heightRatio * 255);
+        System.out.println("Heightmap index: " + index);
+        int pixel;
+        //If statement catches any ArrayIndexOutOfBoundsExceptions
+        if(index < 255) {
+            pixel = heightMap.getRGB(index, 0);
+        } else {
+            pixel = heightMap.getRGB(255, 0);
+        }
+
+        float red = (float)((pixel & 0x00ff0000) >> 16) / 255.0f;
+        float grn = (float)((pixel & 0x0000ff00) >> 8) / 255.0f;
+        float blu = (float)((pixel & 0x000000ff)) / 255.0f;
+
+        Color retColor = new Color(red, grn, blu, 1.0f);
+        return retColor;
     }
 
     private boolean gameOver() {

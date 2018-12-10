@@ -5,10 +5,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.team.retrogame.Screens.PlayScreen;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * created by Ben Mankin on 09/13/18.
@@ -47,6 +55,7 @@ public class RetroGame extends Game {
 
 	//Universal SpriteBatch. All sprites contained, and passed around by this one instance
 	public SpriteBatch batch;
+	public Batch levelBatch;
 
 	//Universal AssetManager. All assets contained, and passed around by this one instance
 	public static AssetManager manager;
@@ -54,6 +63,7 @@ public class RetroGame extends Game {
 	//Shader stuff
 	private String vertShader, fragShader;
 	public ShaderProgram shaderProgram;
+	public BufferedImage heightSampler;
 
 	/*
 	Create SpriteBatch and AssetManager. Load manager with sounds and music. Set Beginning
@@ -71,6 +81,20 @@ public class RetroGame extends Game {
 		shaderProgram = new ShaderProgram(vertShader, fragShader);
 		//Allows the shader program to run without using every uniform.
 		shaderProgram.pedantic = false;
+		if(shaderProgram.isCompiled()) {
+			System.out.println("Shader compiled successfully.");
+			batch.setShader(shaderProgram);
+			try {
+				File file = Gdx.files.internal("heightSampler.png").file();
+				heightSampler = ImageIO.read(file);
+			} catch (IOException e) {
+				System.out.println("Unable to find heightSampler.png");
+			}
+
+		} else {
+			System.out.println("Some problem in the shader!");
+			System.out.println(shaderProgram.getLog());
+		}
 
 
 		/*
@@ -94,6 +118,8 @@ public class RetroGame extends Game {
 	public void dispose() {
 		super.dispose();
 		manager.dispose();
+		shaderProgram.dispose();
+		levelBatch.dispose();
 		batch.dispose();
 	}
 

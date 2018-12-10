@@ -67,6 +67,11 @@ public class Blobb extends Sprite {
     public boolean setToSlide = false;
     public boolean setToButtBounce = false;
 
+    //members used to calculate Blob's 'worldspace' height for use in shaders
+    public float totalHeight = 0.0f;
+    public static final float MODULE_HEIGHT = 3.5f;
+    private int modulesCleared = 0;
+
     public Blobb(PlayScreen screen) {
         //initialize default values
         this.screen = screen;
@@ -179,6 +184,8 @@ public class Blobb extends Sprite {
     public void update(float dt) {
         setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
+
+        totalHeight = b2Body.getPosition().y + (modulesCleared * MODULE_HEIGHT);
     }
 
 

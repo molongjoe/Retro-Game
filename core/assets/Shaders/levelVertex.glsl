@@ -1,5 +1,6 @@
 //MVP matrix
 uniform mat4 u_projTrans;
+uniform vec4 u_tint;
 
 //In from the spriteBatch attributes
 attribute vec2 a_texCoord0;
