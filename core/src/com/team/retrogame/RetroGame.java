@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.team.retrogame.Screens.PlayScreen;
 
+import java.util.LinkedList;
+import java.util.Random;
+
 /**
  * created by Ben Mankin on 09/13/18.
  */
@@ -55,6 +58,26 @@ public class RetroGame extends Game {
 	private String vertShader, fragShader;
 	public ShaderProgram shaderProgram;
 
+	//modules/module utilities
+	private Random rand = new Random();
+	private int moduleNum = 0;
+	//String[] module = {"tiled/module_one.tmx", "tiled/module_two.tmx", "tiled/module_three.tmx", "tiled/module_four.tmx", "tiled/module_five.tmx", "tiled/module_six.tmx"};
+	private LinkedList<String> levelModules = new LinkedList<String>(){
+		{
+			add("tiled/module_one.tmx");
+			add("tiled/module_two.tmx");
+			add("tiled/module_three.tmx");
+			add("tiled/module_four.tmx");
+			add("tiled/module_five.tmx");
+			add("tiled/module_six.tmx");
+			add("tiled/module_seven.tmx");
+			add("tiled/graphic_test.tmx");
+			add("tiled/master_module.tmx");
+		}
+	};
+
+	public static int lives = 5;
+
 	/*
 	Create SpriteBatch and AssetManager. Load manager with sounds and music. Set Beginning
 	screen to PlayScreen
@@ -86,7 +109,8 @@ public class RetroGame extends Game {
 		manager.load("audio/sounds/spring.mp3", Sound.class);
 		*/
 		manager.finishLoading();
-		setScreen(new PlayScreen(this, "tiled/module_two.tmx"));
+		moduleNum = rand.nextInt(levelModules.size());
+		setScreen(new PlayScreen(this, levelModules.remove(moduleNum)));
 	}
 
 	//dispose of resources

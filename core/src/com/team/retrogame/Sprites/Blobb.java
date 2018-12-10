@@ -80,6 +80,7 @@ public class Blobb extends Sprite {
     public boolean setToDie = false;
 
     public boolean floorClear = false;
+    public boolean deadStatus = false;
 
     public Blobb(PlayScreen screen) {
         //initialize default values
@@ -182,22 +183,18 @@ public class Blobb extends Sprite {
         BlobbDie = new Animation<TextureRegion>(0.1f, dying_frames);
         dying_frames.clear();
 
-        //commented out blobbSlide until the animation or physics is fixed
-        /*
         BlobbSlide = new Animation<TextureRegion>(0.1f, sliding_frames);
         sliding_frames.clear();
-        */
 
         //create texture region for Blobb standing
         BlobbStand = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 0, 0, 16, 16);
 
-        BlobbSlide = BlobbFall;
 
         //define Blobb in Box2d
         defineBlobb();
 
         //set initial values for Blobbs location, width and height. And initial frame as BlobbStand.
-        setBounds(0, 0, 16 / RetroGame.PPM, 16 / RetroGame.PPM);
+        setBounds(0, -1, 16 / RetroGame.PPM, 16 / RetroGame.PPM);
         setRegion(BlobbStand);
     }
 
@@ -618,7 +615,7 @@ public class Blobb extends Sprite {
                 startGrab();
             } else {
                 setToSlide = false;
-                b2Body.setGravityScale(1f);
+                b2Body.setGravityScale(0.5f);
             }
         } else { // continue sliding motion
             b2Body.setLinearVelocity(0, -.5f);
@@ -680,7 +677,10 @@ public class Blobb extends Sprite {
         }
     }
 
-    public void dieStart() {
+    public void startDie() {
+        clearMovementFlags();
+        stateTimer = 0;
+
         setToDie = true;
         b2Body.setGravityScale(0);
         b2Body.setLinearVelocity(0,0);
@@ -695,8 +695,12 @@ public class Blobb extends Sprite {
 
     public void dieCheck() {
         if (BlobbDie.isAnimationFinished(stateTimer)) {
-
+            deadStatus = true;
         }
+    }
+
+    public boolean isDead() {
+        return deadStatus;
     }
 
     /**

@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -42,6 +43,7 @@ public class PlayScreen implements Screen {
     private Hud hud;
     private PauseScreen pause;
     private Point spawnPoint;
+    private String currentMap;
 
     //Tiled map variables
     private TmxMapLoader mapLoader;
@@ -70,13 +72,14 @@ public class PlayScreen implements Screen {
     private LinkedList<String> levelModules = new LinkedList<String>(){
         {
             add("tiled/module_one.tmx");
-            add("tiled/module_eight.tmx");
+            add("tiled/module_two.tmx");
             add("tiled/module_three.tmx");
             add("tiled/module_four.tmx");
             add("tiled/module_five.tmx");
             add("tiled/module_six.tmx");
             add("tiled/module_seven.tmx");
-            add("tiled/module_eight.tmx");
+            add("tiled/graphic_test.tmx");
+            add("tiled/master_module.tmx");
         }
     };
 
@@ -100,6 +103,7 @@ public class PlayScreen implements Screen {
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(newMap);
         renderer = new OrthogonalTiledMapRenderer(map, 1 / RetroGame.PPM);
+        currentMap = newMap;
 
         //initially set the gamcam to be centered correctly at the start of of map
         gamecam.position.set((gamePort.getWorldWidth() / 2), (gamePort.getWorldHeight() / 2), 0);
@@ -242,16 +246,22 @@ public class PlayScreen implements Screen {
                     if (!Gdx.input.isKeyPressed(Input.Keys.L))
                         player.startSlide();
                 }
-
-                //pause and unpause functionality
-                if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-                    if (!setToPause)
-                        pause();
-
-                    else if (!setToResume)
-                        resume();
-                }
             }
+
+            //pause and unpause functionality
+            if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+                if (!setToPause)
+                    pause();
+
+                else if (!setToResume)
+                    resume();
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.M))
+                if (music.getVolume() != 0)
+                    music.setVolume(0);
+                else
+                    music.setVolume(0.3f);
         }
     }
 
@@ -308,16 +318,22 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
-        if (gameOver()) {
-            game.setScreen(new GameOverScreen(game));
-            dispose();
+        if (player.isDead()) {
+            RetroGame.lives--;
+            if (RetroGame.lives < 0) {
+                game.setScreen(new GameOverScreen(game));
+                dispose();
+            }
+
+            else {
+                player.deadStatus = false;
+                game.setScreen(new PlayScreen(game,currentMap));
+            }
         }
 
         //if a floor is cleared, set the screen to be the new floor (lacks transition)
-        if (floorClear()) {
-
+        if (player.isFloorCleared()) {
             moduleNum = rand.nextInt(levelModules.size());
-
             game.setScreen(new PlayScreen(game, levelModules.remove(moduleNum)));
             dispose();
         }
