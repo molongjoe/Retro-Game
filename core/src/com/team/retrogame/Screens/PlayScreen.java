@@ -156,7 +156,7 @@ public class PlayScreen implements Screen {
                     if (Gdx.input.isKeyPressed(Input.Keys.D))
                         player.moveRightGround();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                        player.groundJump();
+                        player.startGroundJump();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
                         player.startFloat();
                 }

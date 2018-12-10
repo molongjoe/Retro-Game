@@ -70,6 +70,8 @@ public class Blobb extends Sprite {
     public boolean initialFloat = true;
     public float buttBounceHeight = 0;
 
+    public boolean setToJump = false;
+    public boolean setToFall = false;
     public boolean setToPound = false;
     public boolean setToFloat = false;
     public boolean setToSplat = false;
@@ -209,6 +211,9 @@ public class Blobb extends Sprite {
         if (feetOnGround)
             initialFloat = true;
 
+        if (setToFall && b2Body.getLinearVelocity().y < 0)
+            setToFall = false;
+
         System.out.println("feet: " + feetOnGround + " " +
                 "head: " + headOnCeiling + " " +
                 "left: " + onLeftWall + " " +
@@ -232,6 +237,7 @@ public class Blobb extends Sprite {
                 break;
             case JUMPING:
                 region = BlobbJump.getKeyFrame(stateTimer,false);
+                groundJumpCheck();
                 break;
             case RUNNING:
                 region = BlobbRun.getKeyFrame(stateTimer, true);
@@ -486,9 +492,22 @@ public class Blobb extends Sprite {
     }
 
 
-    public void groundJump() {
+    public void startGroundJump() {
+        clearMovementFlags();
+        setToJump = true;
         b2Body.applyLinearImpulse(new Vector2(0, 2.3f), b2Body.getWorldCenter(), true);
+
         //RetroGame.manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
+    }
+
+    public void groundJumpCheck() {
+        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE))
+            startFall();
+        if (setToFall) {
+            if (b2Body.getLinearVelocity().y >= 0) {
+                b2Body.applyLinearImpulse(new Vector2(0, -0.08f), b2Body.getWorldCenter(), true);
+            }
+        }
     }
 
     public void wallJump() { //TODO: should he wall jump even if he's not grabbing or sliding?
@@ -520,6 +539,10 @@ public class Blobb extends Sprite {
         //revert state to normal
         clearMovementFlags();
         b2Body.setGravityScale(0.5f);
+    }
+
+    public void startFall() {
+        setToFall = true;
     }
 
     public void startPound() {

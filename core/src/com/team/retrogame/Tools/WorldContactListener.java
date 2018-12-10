@@ -87,18 +87,30 @@ public class WorldContactListener implements ContactListener {
 
 
             //Blobb collides from above with a platform that is deactivated. Turn it on. Otherwise, leave it off (do nothing)
-            case RetroGame.BLOBB_FEET_BIT | RetroGame.PLATFORM_OFF_BIT:
-                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT) {
+            case RetroGame.BLOBB_GENERAL_BIT | RetroGame.PLATFORM_ON_BIT:
+                if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT) {
                     if (fixA.getBody().getLinearVelocity().y <= 0) {
                         Filter filter = new Filter();
-                        filter.maskBits = RetroGame.PLATFORM_ON_BIT;
+                        filter.maskBits = RetroGame.BLOBB_GENERAL_BIT;
+                        fixB.setFilterData(filter);
+                    }
+
+                    else {
+                        Filter filter = new Filter();
+                        filter.maskBits = RetroGame.NOTHING_BIT;
                         fixB.setFilterData(filter);
                     }
                 }
                 else {
                     if (fixB.getBody().getLinearVelocity().y <= 0) {
                         Filter filter = new Filter();
-                        filter.maskBits = RetroGame.PLATFORM_ON_BIT;
+                        filter.maskBits = RetroGame.BLOBB_GENERAL_BIT;
+                        fixA.setFilterData(filter);
+                    }
+
+                    else {
+                        Filter filter = new Filter();
+                        filter.maskBits = RetroGame.NOTHING_BIT;
                         fixA.setFilterData(filter);
                     }
                 }
