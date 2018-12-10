@@ -95,19 +95,15 @@ public class RetroGame extends Game {
 		//Allows the shader program to run without using every uniform.
 		shaderProgram.pedantic = false;
 
-
-		/*
-		manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
-		manager.load("audio/sounds/bubbleLand.mp3", Sound.class);
-		manager.load("audio/sounds/bubblePound.mp3", Sound.class);
-		manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
-		manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
-		manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
-		manager.load("audio/sounds/bubbleFloatPop.mp3", Sound.class);
-		manager.load("audio/sounds/bubbleButtBounce.mp3", Sound.class);
-		manager.load("audio/sounds/bubbleDie.mp3", Sound.class);
-		manager.load("audio/sounds/spring.mp3", Sound.class);
-		*/
+		manager.load("audio/sounds/jump.mp3", Sound.class);
+		manager.load("audio/sounds/land.mp3", Sound.class);
+		manager.load("audio/sounds/bounce.mp3", Sound.class);
+		manager.load("audio/sounds/splatDown.mp3", Sound.class);
+		manager.load("audio/sounds/splatUp.mp3", Sound.class);
+		manager.load("audio/sounds/float.mp3", Sound.class);
+		manager.load("audio/sounds/pop.mp3", Sound.class);
+		manager.load("audio/sounds/dash.mp3", Sound.class);
+		manager.load("audio/sounds/die.mp3", Sound.class);
 		manager.finishLoading();
 		moduleNum = rand.nextInt(levelModules.size());
 		setScreen(new PlayScreen(this, levelModules.remove(moduleNum)));

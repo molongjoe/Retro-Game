@@ -2,6 +2,7 @@ package com.team.retrogame.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -384,7 +385,6 @@ public class Blobb extends Sprite {
             else if (previousState == State.GRABBING) // Only reachable if special movement flags, include grab and slide are false
                 return State.FALLING;
             else if (b2Body.getLinearVelocity().x != 0 && b2Body.getLinearVelocity().y == 0) {
-                //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.RUNNING; }
             //default him standing
             else {
@@ -400,7 +400,7 @@ public class Blobb extends Sprite {
                 if (b2Body.getGravityScale() == 0.5f && feetOnGround) {
                     setToPound = false;
                     startSplat();
-                    //RetroGame.manager.load("audio/sounds/bubbleSplat.mp3", Sound.class);
+                    RetroGame.manager.get("audio/sounds/splatDown.mp3", Sound.class).play(0.1f);
                     return State.SPLATTING;
                 }
                 //otherwise still pounding
@@ -490,7 +490,7 @@ public class Blobb extends Sprite {
         setToJump = true;
         b2Body.applyLinearImpulse(new Vector2(0, 2.3f), b2Body.getWorldCenter(), true);
 
-        //RetroGame.manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
+        RetroGame.manager.get("audio/sounds/jump.mp3", Sound.class).play(0.5f);
     }
 
     public void groundJumpCheck() {
@@ -532,6 +532,7 @@ public class Blobb extends Sprite {
         //revert state to normal
         clearMovementFlags();
         b2Body.setGravityScale(0.5f);
+        RetroGame.manager.get("audio/sounds/jump.mp3", Sound.class).play(0.5f);
     }
 
     public void startFall() {
@@ -544,7 +545,6 @@ public class Blobb extends Sprite {
 
         buttBounceHeight = b2Body.getPosition().y * 4;
         System.out.println(buttBounceHeight);
-        //RetroGame.manager.load("audio/sounds/bubblePound.mp3", Sound.class);
     }
 
     public void poundCheck() {
@@ -578,7 +578,7 @@ public class Blobb extends Sprite {
             initialFloat = false;
             floatTimer = 0;
         }
-        //RetroGame.manager.load("audio/sounds/bubbleFloat.mp3", Sound.class);
+        RetroGame.manager.get("audio/sounds/float.mp3", Sound.class).play(0.6f);
     }
 
     public void floatCheck(float floatTimer) {
@@ -587,15 +587,14 @@ public class Blobb extends Sprite {
             setToFloat = false;
             b2Body.setGravityScale(0.5f);
 
-            if (floatTimer > 5)
+            if (floatTimer > 5) {
                 canFloat = false;
+                RetroGame.manager.get("audio/sounds/pop.mp3", Sound.class).play(0.4f);
+            }
             else
                 canFloat = true;
-            //if (stateTimer > 3)
-                //RetroGame.manager.load("audio/sounds/bubblePop.mp3", Sound.class);
 
-            //else
-                //RetroGame.manager.load("audio/sounds/bubbleFloatEnd.mp3", Sound.class);
+
         }
         else {
             b2Body.setGravityScale(0.1f);
@@ -678,6 +677,8 @@ public class Blobb extends Sprite {
             else
                 b2Body.applyLinearImpulse(new Vector2(3, 0), b2Body.getWorldCenter(), true);
         }
+
+        RetroGame.manager.get("audio/sounds/dash.mp3", Sound.class).play(0.4f);
     }
 
     public void dashCheck() {
@@ -707,6 +708,8 @@ public class Blobb extends Sprite {
         for (Fixture fixture : b2Body.getFixtureList()) {
             fixture.setFilterData(filter);
         }
+
+        RetroGame.manager.get("audio/sounds/die.mp3", Sound.class).play(0.4f);
     }
 
     public void dieCheck() {
@@ -727,6 +730,7 @@ public class Blobb extends Sprite {
         clearMovementFlags();
         //buttBounceHeight += 1;
         b2Body.applyLinearImpulse(new Vector2(b2Body.getLinearVelocity().x, buttBounceHeight), b2Body.getWorldCenter(), true);
+        RetroGame.manager.get("audio/sounds/splatUp.mp3", Sound.class).play(0.1f);
     }
 
     public void clearMovementFlags() {
@@ -754,6 +758,7 @@ public class Blobb extends Sprite {
             b2Body.applyLinearImpulse(new Vector2(0, 4), b2Body.getWorldCenter(), true);
             setToFloat = false;
             initialFloat = true;
+            RetroGame.manager.get("audio/sounds/bounce.mp3", Sound.class).play();
         }
     }
 
