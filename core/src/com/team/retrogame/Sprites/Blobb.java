@@ -505,7 +505,7 @@ public class Blobb extends Sprite {
             startFall();
         if (setToFall) {
             if (b2Body.getLinearVelocity().y >= 0) {
-                b2Body.applyLinearImpulse(new Vector2(0, -0.08f), b2Body.getWorldCenter(), true);
+                b2Body.applyLinearImpulse(new Vector2(0, -0.3f), b2Body.getWorldCenter(), true);
             }
         }
     }
