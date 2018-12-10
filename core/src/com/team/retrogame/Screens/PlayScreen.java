@@ -70,12 +70,13 @@ public class PlayScreen implements Screen {
     private LinkedList<String> levelModules = new LinkedList<String>(){
         {
             add("tiled/module_one.tmx");
-            add("tiled/module_two.tmx");
+            add("tiled/module_eight.tmx");
             add("tiled/module_three.tmx");
             add("tiled/module_four.tmx");
             add("tiled/module_five.tmx");
             add("tiled/module_six.tmx");
             add("tiled/module_seven.tmx");
+            add("tiled/module_eight.tmx");
         }
     };
 
@@ -126,6 +127,7 @@ public class PlayScreen implements Screen {
     }
 
     public TextureAtlas getAtlas() {
+
         return atlas;
     }
 
@@ -310,9 +312,8 @@ public class PlayScreen implements Screen {
         }
 
         //if a floor is cleared, set the screen to be the new floor (lacks transition)
-        if (player.isFloorCleared()) {
+        if (floorClear()) {
 
-            player.floorClear = false;
             moduleNum = rand.nextInt(levelModules.size());
 
             game.setScreen(new PlayScreen(game, levelModules.remove(moduleNum)));
