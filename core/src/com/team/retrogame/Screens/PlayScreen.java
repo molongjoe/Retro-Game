@@ -140,7 +140,7 @@ public class PlayScreen implements Screen {
         //control RetroGame using immediate impulses
 
         //if Blobb isn't dead, these inputs are valid
-        if(player.currentState != Blobb.State.DEAD) {
+        if(player.currentState != Blobb.State.DYING) {
             //if game isn't paused and player isn't performing a special action, these inputs are valid
             if(setToResume || !setToPause) {
                 //if player is standing or running
@@ -267,7 +267,7 @@ public class PlayScreen implements Screen {
             player.update(dt);
 
             //attach the gamecam to the world
-            if (player.currentState != Blobb.State.DEAD) {
+            if (player.currentState != Blobb.State.DYING) {
                 gamecam.position.x = gamePort.getWorldWidth()/2;
                 gamecam.position.y = gamePort.getWorldHeight()/2;
             }
@@ -332,7 +332,7 @@ public class PlayScreen implements Screen {
     }
 
     private boolean gameOver() {
-        if(player.currentState == Blobb.State.DEAD && player.getStateTimer() > 3) {
+        if(player.currentState == Blobb.State.DYING && player.getStateTimer() > 3) {
             return true;
         }
         return false;

@@ -31,7 +31,7 @@ public class Blobb extends Sprite {
     String[] dying = {"Dying-1","Dying-2","Dying-3","Dying-4","Dying-6","Dying-7","Dying-8","Dying-9","Dying-10"};
 
     //All the states Blobb can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING,
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, SPLATTING, POUNDING, FLOATING, GRABBING,
         SLIDING, DASHING, DYING}
 
     //log current state and previous state
@@ -54,7 +54,6 @@ public class Blobb extends Sprite {
     private Animation<TextureRegion> BlobbSlide;
     private Animation<TextureRegion> BlobbDash;
     private Animation<TextureRegion> BlobbDie;
-    private TextureRegion BlobbDead;
 
     //behavioral checks
     private float stateTimer;
@@ -78,6 +77,7 @@ public class Blobb extends Sprite {
     public boolean setToSlide = false;
     public boolean setToButtBounce = false;
     public boolean setToDash = false;
+    public boolean setToDie = false;
 
     public boolean floorClear = false;
 
@@ -193,9 +193,6 @@ public class Blobb extends Sprite {
 
         BlobbSlide = BlobbFall;
 
-        //create dead Blobb texture region
-        BlobbDead = new TextureRegion(screen.getAtlas().findRegion("Running-1"), 96, 0, 16, 16);
-
         //define Blobb in Box2d
         defineBlobb();
 
@@ -236,9 +233,6 @@ public class Blobb extends Sprite {
             case STANDING:
                 region = BlobbStand;
                 break;
-            case DEAD:
-                region = BlobbDead;
-                break;
             case JUMPING:
                 region = BlobbJump.getKeyFrame(stateTimer,false);
                 break;
@@ -271,10 +265,9 @@ public class Blobb extends Sprite {
                 region = BlobbDash.getKeyFrame(stateTimer, false);
                 dashCheck();
                 break;
-
             case DYING:
                 region = BlobbDie.getKeyFrame(stateTimer, false);
-                //some check here
+                dieCheck();
                 break;
 
             default:
@@ -431,6 +424,8 @@ public class Blobb extends Sprite {
                 return State.GRABBING;
             } else if (setToDash) {
                 return State.DASHING;
+            } else if (setToDie) {
+                return State.DYING;
             } else
                 return State.STANDING;
 
@@ -685,6 +680,25 @@ public class Blobb extends Sprite {
         }
     }
 
+    public void dieStart() {
+        setToDie = true;
+        b2Body.setGravityScale(0);
+        b2Body.setLinearVelocity(0,0);
+
+        Filter filter = new Filter();
+        filter.maskBits = RetroGame.NOTHING_BIT;
+
+        for (Fixture fixture : b2Body.getFixtureList()) {
+            fixture.setFilterData(filter);
+        }
+    }
+
+    public void dieCheck() {
+        if (BlobbDie.isAnimationFinished(stateTimer)) {
+
+        }
+    }
+
     /**
     TODO: Decide behavior. There's not much room to be better than a normal jump but worse than a trampoline.
      Currently written so jump height mirrors fall height
@@ -703,11 +717,12 @@ public class Blobb extends Sprite {
         setToButtBounce = false;
         setToDash = false;
         setToSlide = false;
+        setToDie = false;
     }
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        return (setToFloat || setToPound || setToSplat || setToGrab || setToDash || setToSlide);
+        return (setToFloat || setToPound || setToSplat || setToGrab || setToDash || setToSlide || setToDie);
     }
 
     public void trampolineBounce() {
@@ -724,10 +739,6 @@ public class Blobb extends Sprite {
 
     public boolean isFloorCleared() {
         return floorClear;
-    }
-
-    public void die() {
-        System.out.println("You just died you stupid idiot");
     }
 
     //Draw Blobb's physics body in the world

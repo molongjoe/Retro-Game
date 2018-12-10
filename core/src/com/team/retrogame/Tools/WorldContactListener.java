@@ -63,9 +63,9 @@ public class WorldContactListener implements ContactListener {
             //Blobb collides with spike
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.SPIKE_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT)
-                    ((Blobb) fixA.getUserData()).die();
+                    ((Blobb) fixA.getUserData()).dieStart();
                 else
-                    ((Blobb) fixB.getUserData()).die();
+                    ((Blobb) fixB.getUserData()).dieStart();
                 break;
             //Blobb collides with trampoline
             case RetroGame.BLOBB_FEET_BIT | RetroGame.TRAMPOLINE_BIT:
