@@ -41,6 +41,7 @@ public class WorldContactListener implements ContactListener {
                     ((Blobb) fixB.getUserData()).headOnCeiling = true;
                 break;
             case RetroGame.BLOBB_FEET_BIT | RetroGame.GROUND_BIT:
+            case RetroGame.BLOBB_FEET_BIT | RetroGame.SPIKE_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT)
                     ((Blobb) fixA.getUserData()).feetOnGround = true;
                 else
@@ -140,6 +141,7 @@ public class WorldContactListener implements ContactListener {
         switch (cdef) {
             //Blobb has ended collision with the ground
             case RetroGame.BLOBB_FEET_BIT | RetroGame.GROUND_BIT:
+            case RetroGame.BLOBB_FEET_BIT | RetroGame.SPIKE_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.BLOBB_FEET_BIT)
                     ((Blobb) fixA.getUserData()).feetOnGround = false;
                 else
