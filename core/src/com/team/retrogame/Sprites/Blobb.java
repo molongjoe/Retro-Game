@@ -28,10 +28,11 @@ public class Blobb extends Sprite {
     String[] floating = {"Floating-1","Floating-2","Floating-3","Floating-4"};
     String[] dashing = {"Dashing-1", "Dashing-2", "Dashing-3"};
     String[] sliding = {"Sliding-1", "Sliding-2"};
+    String[] dying = {"Dying-1","Dying-2","Dying-3","Dying-4","Dying-6","Dying-7","Dying-8","Dying-9","Dying-10"};
 
     //All the states Blobb can be in
     public enum State {FALLING, JUMPING, STANDING, RUNNING, DEAD, SPLATTING, POUNDING, FLOATING, GRABBING,
-        SLIDING, DASHING}
+        SLIDING, DASHING, DYING}
 
     //log current state and previous state
     public State currentState;
@@ -52,6 +53,7 @@ public class Blobb extends Sprite {
     private Animation<TextureRegion> BlobbFloat;
     private Animation<TextureRegion> BlobbSlide;
     private Animation<TextureRegion> BlobbDash;
+    private Animation<TextureRegion> BlobbDie;
     private TextureRegion BlobbDead;
 
     //behavioral checks
@@ -99,6 +101,7 @@ public class Blobb extends Sprite {
         Array<TextureRegion> floating_frames = new Array<TextureRegion>();
         Array<TextureRegion> sliding_frames = new Array<TextureRegion>();
         Array<TextureRegion> dashing_frames = new Array<TextureRegion>();
+        Array<TextureRegion> dying_frames = new Array<TextureRegion>();
 
         //Add the different running sprites to our running frames
         for(int i = 0; i <= 7; i++) {
@@ -138,6 +141,10 @@ public class Blobb extends Sprite {
             sliding_frames.add(new TextureRegion(screen.getAtlas().findRegion(sliding[i]), 0, 0, 16, 16));
         }
 
+        for(int i = 0; i <= 8; i++){
+            dying_frames.add(new TextureRegion(screen.getAtlas().findRegion(dying[i]), 0, 0, 16, 16));
+        }
+
 
         //Create the animation of Running
         BlobbRun = new Animation<TextureRegion>(0.1f, running_frames);
@@ -170,6 +177,10 @@ public class Blobb extends Sprite {
         //Create the animation of Dashing
         BlobbDash = new Animation<TextureRegion>(0.06f, dashing_frames);
         dashing_frames.clear();
+
+        //Create the animation for Dying
+        BlobbDie = new Animation<TextureRegion>(0.1f, dying_frames);
+        dying_frames.clear();
 
         //commented out blobbSlide until the animation or physics is fixed
         /*
@@ -259,6 +270,11 @@ public class Blobb extends Sprite {
             case DASHING:
                 region = BlobbDash.getKeyFrame(stateTimer, false);
                 dashCheck();
+                break;
+
+            case DYING:
+                region = BlobbDie.getKeyFrame(stateTimer, false);
+                //some check here
                 break;
 
             default:
