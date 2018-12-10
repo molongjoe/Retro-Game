@@ -361,7 +361,9 @@ public class Blobb extends Sprite {
     private State getState(){
         if (!specialMovement()) {
             //if touching a wall in midair or was Grabbing and still falling, start slide
-             if ((touchingWall && !feetOnGround && b2Body.getLinearVelocity().y != 0) || (previousState == State.GRABBING && !feetOnGround) && canSlide) {
+             if ( (touchingWall && !feetOnGround && b2Body.getLinearVelocity().y < 0) /* touching wall and not ground, while falling */
+                     // || (previousState == State.GRABBING && !feetOnGround) && canSlide ) {
+             ) {
                  startSlide();
                  return State.SLIDING; }
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
@@ -585,9 +587,22 @@ public class Blobb extends Sprite {
         canSlide = true;
     }
 
+    /**
+     * Logic for ending slide and mechanics for movement while sliding.
+     * Ending slide:
+     *      If not touching wall, fall freely
+     *      If touching ground, do nothing, and allow state to return to STANDING
+     *      If setToGrab, player is trying to grab wall, call startGrab to halt motion
+     *      TODO: are we still relying on variable canSlide? Function calls to all the lifting to halt sliding
+     * If y velocity is positive, shouldn't be sliding. Move freely upwards. Player would grab wall if he didn't want to rise.
+     *
+     * Moving while sliding:
+     *      Maintain constant speed, slow descent.
+     */
     public void slideCheck() {
         //if not touching a wall or on the ground or set to grab, no more sliding
-        if (!touchingWall || feetOnGround || setToGrab || !canSlide) {
+        if (!touchingWall || feetOnGround || setToGrab || !canSlide ||
+            b2Body.getLinearVelocity().y > 0) {
             if(setToGrab) {
                 startGrab();
             } else {
