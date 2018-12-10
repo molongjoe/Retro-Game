@@ -63,7 +63,7 @@ public class Blobb extends Sprite {
     public boolean headOnCeiling;
     public boolean onLeftWall;
     public boolean onRightWall;
-    public boolean canSlide;
+    public boolean canSlide; // TODO: Are we using this? Redundant and confusing since right now, every check for can slide manually checks all conditions.
     public boolean canFloat = true;
     public boolean canDash = true;
     public boolean initialFloat = true;
@@ -360,9 +360,11 @@ public class Blobb extends Sprite {
             else if (b2Body.getLinearVelocity().y > 0 || (b2Body.getLinearVelocity().y < 0 && (previousState == State.JUMPING)))
                 return State.JUMPING;
                 //if negative in Y-Axis and was standing, floating, or falling, Blobb is falling
-            else if ((b2Body.getLinearVelocity().y < 0 && (previousState == State.STANDING || previousState == State.FLOATING || previousState == State.FALLING || previousState == State.DASHING)))
+            else if ((b2Body.getLinearVelocity().y < 0 && (previousState == State.STANDING || previousState == State.FLOATING || previousState == State.FALLING || previousState == State.DASHING || previousState == State.GRABBING)))
                 return State.FALLING;
                 //if Blobb is positive or negative in the X axis he is running
+            else if (previousState == State.GRABBING) // Only reachable if special movement flags, include grab and slide are false
+                return State.FALLING;
             else if (b2Body.getLinearVelocity().x != 0 && b2Body.getLinearVelocity().y == 0) {
                 //RetroGame.manager.get("audio/sounds/bubbleLand.mp3",Sound.class).play();
                 return State.RUNNING; }
@@ -468,7 +470,7 @@ public class Blobb extends Sprite {
         //RetroGame.manager.load("audio/sounds/bubbleJump.mp3", Sound.class);
     }
 
-    public void wallJump() {
+    public void wallJump() { //TODO: should he wall jump even if he's not grabbing or sliding?
         //set velocity to zero to accomodate for impulse
         b2Body.setLinearVelocity(0,0);
 
@@ -571,12 +573,21 @@ public class Blobb extends Sprite {
     public void startSlide() {
         clearMovementFlags();
         setToSlide = true;
+        canSlide = true;
     }
 
     public void slideCheck() {
         //if not touching a wall or on the ground or set to grab, no more sliding
-        if (!touchingWall || feetOnGround || setToGrab || !canSlide)
-            setToSlide = false;
+        if (!touchingWall || feetOnGround || setToGrab || !canSlide) {
+            if(setToGrab) {
+                startGrab();
+            } else {
+                setToSlide = false;
+                b2Body.setGravityScale(1f);
+            }
+        } else { // continue sliding motion
+            b2Body.setLinearVelocity(0, -.5f);
+        }
     }
 
     public void startGrab() {
@@ -586,7 +597,9 @@ public class Blobb extends Sprite {
 
     public void grabCheck() {
         //if not pressing the grab key or not touching wall, grab ends
-        if ((!Gdx.input.isKeyPressed(Input.Keys.L)) || !touchingWall) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.L)){
+            startSlide();
+        } else if (!touchingWall) {
             setToGrab = false;
             b2Body.setGravityScale(0.8f);
             b2Body.setLinearVelocity(0,-0.1f);
