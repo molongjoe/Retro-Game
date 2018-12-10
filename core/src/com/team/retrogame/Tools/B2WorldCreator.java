@@ -42,7 +42,7 @@ public class B2WorldCreator {
          */
 
         //Create Ground Fixtures
-        for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get(0).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -56,23 +56,8 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
 
-        //Create Wall Fixtures
-        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set((rect.getX() + rect.getWidth() / 2) / RetroGame.PPM, (rect.getY() + rect.getHeight() / 2) / RetroGame.PPM);
-
-            body = world.createBody(bdef);
-
-            shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
-            fdef.shape = shape;
-            fdef.filter.categoryBits = RetroGame.WALL_BIT;
-            body.createFixture(fdef);
-        }
-
         //Create Spike Fixtures
-        for (MapObject object : map.getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -87,7 +72,7 @@ public class B2WorldCreator {
         }
 
         //Create Trampoline Fixtures
-        for (MapObject object : map.getLayers().get(9).getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -102,7 +87,7 @@ public class B2WorldCreator {
         }
 
         //Create One Way Platform Fixtures
-        for (MapObject object : map.getLayers().get(10).getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -112,12 +97,12 @@ public class B2WorldCreator {
 
             shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
             fdef.shape = shape;
-            fdef.filter.categoryBits = RetroGame.ONE_WAY_PLATFORM_BIT;
+            fdef.filter.categoryBits = RetroGame.PLATFORM_ON_BIT;
             body.createFixture(fdef);
         }
 
         //Create Crumble Platform Fixtures
-        for (MapObject object : map.getLayers().get(10).getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -131,8 +116,8 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
 
-        //Create Crumble Wall Fixtures
-        for (MapObject object : map.getLayers().get(11).getObjects().getByType(RectangleMapObject.class)) {
+        //Create Goal Fixtures
+        for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -142,8 +127,9 @@ public class B2WorldCreator {
 
             shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
             fdef.shape = shape;
-            fdef.filter.categoryBits = RetroGame.GOAL_BIT;
+            fdef.filter.categoryBits = RetroGame.CRUMBLE_PLATFORM_BIT;
             body.createFixture(fdef);
         }
     }
 }
+
