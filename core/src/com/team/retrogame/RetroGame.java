@@ -64,6 +64,7 @@ public class RetroGame extends Game {
 	//String[] module = {"tiled/module_one.tmx", "tiled/module_two.tmx", "tiled/module_three.tmx", "tiled/module_four.tmx", "tiled/module_five.tmx", "tiled/module_six.tmx"};
 	private LinkedList<String> levelModules = new LinkedList<String>(){
 		{
+			/*
 			add("tiled/module_one.tmx");
 			add("tiled/module_two.tmx");
 			add("tiled/module_three.tmx");
@@ -71,8 +72,8 @@ public class RetroGame extends Game {
 			add("tiled/module_five.tmx");
 			add("tiled/module_six.tmx");
 			add("tiled/module_seven.tmx");
-			add("tiled/graphic_test.tmx");
-			add("tiled/master_module.tmx");
+			*/
+			add("tiled/trampoline.tmx");
 		}
 	};
 
