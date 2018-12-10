@@ -75,7 +75,7 @@ public class Blobb extends Sprite {
 
     //members used to calculate Blob's 'worldspace' height for use in shaders
     public float totalHeight = 0.0f;
-    public static final float MODULE_HEIGHT = 3.5f;
+    public static final float MODULE_HEIGHT = 350;
     private int modulesCleared = 0;
 
     public Blobb(PlayScreen screen) {
@@ -200,7 +200,7 @@ public class Blobb extends Sprite {
 
         System.out.println(currentState);
 
-        totalHeight = b2Body.getPosition().y + (modulesCleared * MODULE_HEIGHT);
+        totalHeight = (b2Body.getPosition().y * 100) + (modulesCleared * MODULE_HEIGHT);
     }
 
 

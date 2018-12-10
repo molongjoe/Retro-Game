@@ -305,7 +305,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined);
         //Sets the shader for the batch associated with the map renderer
         game.levelBatch = renderer.getBatch();
-        //game.levelBatch.setShader(bShader);
+        game.levelBatch.setShader(bShader);
 
         //Per-frame shader updates have to go between the batch.begin/batch.end pair
         game.batch.begin();
