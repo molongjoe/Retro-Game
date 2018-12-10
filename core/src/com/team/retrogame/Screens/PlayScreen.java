@@ -239,6 +239,8 @@ public class PlayScreen implements Screen {
                         player.startPound();
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
                         player.wallJump();
+                    if (!Gdx.input.isKeyPressed(Input.Keys.L))
+                        player.startSlide();
                 }
 
                 //pause and unpause functionality
