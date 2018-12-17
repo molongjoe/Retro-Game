@@ -214,7 +214,7 @@ public class PlayScreen implements Screen {
                 //if player is splatting
                 if(player.currentState == Blobb.State.SPLATTING) {
                     if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                        player.buttBounce();
+                        player.startButtBounce();
                 }
 
                 //if player is sliding

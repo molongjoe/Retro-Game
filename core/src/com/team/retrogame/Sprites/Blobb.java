@@ -32,7 +32,7 @@ public class Blobb extends Sprite {
     String[] dying = {"Dying-1","Dying-2","Dying-3","Dying-4","Dying-6","Dying-7","Dying-8","Dying-9","Dying-10"};
 
     //All the states Blobb can be in
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, SPLATTING, POUNDING, FLOATING, GRABBING,
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, SPLATTING, POUNDING, BUTT_BOUNCING, FLOATING, GRABBING,
         SLIDING, DASHING, DYING}
 
     //log current state and previous state
@@ -49,6 +49,7 @@ public class Blobb extends Sprite {
     private Animation<TextureRegion> BlobbJump;
     private Animation<TextureRegion> BlobbSplat;
     private Animation<TextureRegion> BlobbPound;
+    private Animation<TextureRegion> BlobbButtBounce;
     private Animation<TextureRegion> BlobbGrab;
     private Animation<TextureRegion> BlobbFall;
     private Animation<TextureRegion> BlobbFloat;
@@ -158,6 +159,8 @@ public class Blobb extends Sprite {
         BlobbJump = new Animation<TextureRegion>(0.1f, jumping_frames);
         jumping_frames.clear();
 
+        BlobbButtBounce = BlobbJump;
+
         //Create the animation of Splatting
         BlobbSplat = new Animation<TextureRegion>(0.05f, splatting_frames);
         splatting_frames.clear();
@@ -215,12 +218,13 @@ public class Blobb extends Sprite {
         if (setToFall && b2Body.getLinearVelocity().y < 0)
             setToFall = false;
 
+
+        /*
         System.out.println("feet: " + feetOnGround + " " +
                 "head: " + headOnCeiling + " " +
                 "left: " + onLeftWall + " " +
                 "right: " + onRightWall);
-
-        System.out.println(currentState);
+        */
 
 
     }
@@ -252,6 +256,10 @@ public class Blobb extends Sprite {
                 break;
             case SPLATTING:
                 region = BlobbSplat.getKeyFrame(stateTimer, false);
+                break;
+            case BUTT_BOUNCING:
+                region = BlobbButtBounce.getKeyFrame(stateTimer, false);
+                buttBounceCheck();
                 break;
             case FLOATING:
                 region = BlobbFloat.getKeyFrame(stateTimer, false);
@@ -298,6 +306,10 @@ public class Blobb extends Sprite {
 
         //floatTimer uses the delta time to find if the float duration has exceeded the threshold
         floatTimer += dt;
+
+        //For debugging, displays the new state whenever the Blobb's state changes
+        if (currentState != previousState)
+            System.out.println(currentState);
 
         //update previous state
         previousState = currentState;
@@ -412,6 +424,8 @@ public class Blobb extends Sprite {
                     return State.STANDING;
                 } else
                     return State.SPLATTING;
+            } else if (setToButtBounce) {
+                return State.BUTT_BOUNCING;
             } else if (setToFloat) {
                 return State.FLOATING;
             } else if (setToSlide) {
@@ -543,8 +557,7 @@ public class Blobb extends Sprite {
         clearMovementFlags();
         setToPound = true;
 
-        buttBounceHeight = b2Body.getPosition().y * RetroGame.PPM;
-        System.out.println(buttBounceHeight);
+        buttBounceHeight = b2Body.getPosition().y;
     }
 
     public void poundCheck() {
@@ -564,6 +577,24 @@ public class Blobb extends Sprite {
     }
 
     public void splatCheck() {
+    }
+
+    public void startButtBounce() {
+        clearMovementFlags();
+        setToButtBounce = true;
+
+        b2Body.setGravityScale(0);
+        b2Body.applyLinearImpulse(new Vector2(0, 1.5f), b2Body.getWorldCenter(), true);
+
+        RetroGame.manager.get("audio/sounds/splatUp.mp3", Sound.class).play(0.1f);
+    }
+
+    public void buttBounceCheck() {
+        //if the blobb exceeds his starting height or if the player releases space, tge ascent is halted
+        if (b2Body.getPosition().y >= buttBounceHeight || !Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            b2Body.setGravityScale(0.5f);
+            setToButtBounce = false;
+        }
     }
 
     public void startFloat() {
@@ -722,16 +753,6 @@ public class Blobb extends Sprite {
         return deadStatus;
     }
 
-    /**
-    TODO: Decide behavior. There's not much room to be better than a normal jump but worse than a trampoline.
-     Currently written so jump height mirrors fall height
-     */
-    public void buttBounce() {
-        clearMovementFlags();
-        //buttBounceHeight += 1;
-        b2Body.applyLinearImpulse(new Vector2(b2Body.getLinearVelocity().x, buttBounceHeight), b2Body.getWorldCenter(), true);
-        RetroGame.manager.get("audio/sounds/splatUp.mp3", Sound.class).play(0.1f);
-    }
 
     public void clearMovementFlags() {
         setToPound = false;
@@ -746,7 +767,7 @@ public class Blobb extends Sprite {
 
     //if no special movement is happening, return false. Otherwise true
     public boolean specialMovement() {
-        return (setToFloat || setToPound || setToSplat || setToGrab || setToDash || setToSlide || setToDie);
+        return (setToFloat || setToPound || setToSplat || setToButtBounce || setToGrab || setToDash || setToSlide || setToDie);
     }
 
     public void trampolineBounce() {
