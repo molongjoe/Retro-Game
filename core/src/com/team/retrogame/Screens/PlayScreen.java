@@ -265,10 +265,10 @@ public class PlayScreen implements Screen {
                 else
                     music.setVolume(0.3f);
             }
+        }
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-                player.floorClear = true;
-            }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+            player.floorClear = true;
         }
     }
 
