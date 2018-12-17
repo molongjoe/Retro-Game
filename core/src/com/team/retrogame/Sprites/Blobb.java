@@ -543,7 +543,7 @@ public class Blobb extends Sprite {
         clearMovementFlags();
         setToPound = true;
 
-        buttBounceHeight = b2Body.getPosition().y * 4;
+        buttBounceHeight = b2Body.getPosition().y * RetroGame.PPM;
         System.out.println(buttBounceHeight);
     }
 

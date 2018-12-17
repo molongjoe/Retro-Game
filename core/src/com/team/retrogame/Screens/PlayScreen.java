@@ -259,11 +259,16 @@ public class PlayScreen implements Screen {
                     resume();
             }
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.M))
+            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                 if (music.getVolume() != 0)
                     music.setVolume(0);
                 else
                     music.setVolume(0.3f);
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+                player.floorClear = true;
+            }
         }
     }
 
@@ -321,6 +326,7 @@ public class PlayScreen implements Screen {
         hud.stage.draw();
 
         if (player.isDead()) {
+            /*
             RetroGame.lives--;
             if (RetroGame.lives < 0) {
                 game.setScreen(new GameOverScreen(game));
@@ -330,7 +336,12 @@ public class PlayScreen implements Screen {
             else {
                 player.deadStatus = false;
                 game.setScreen(new PlayScreen(game,currentMap));
+                dispose();
             }
+            */
+            player.deadStatus = false;
+            game.setScreen(new PlayScreen(game,currentMap));
+            dispose();
         }
 
         //if a floor is cleared, set the screen to be the new floor (lacks transition)
