@@ -81,6 +81,8 @@ public class PlayScreen implements Screen {
             add("tiled/graphic_test.tmx");
             add("tiled/master_module.tmx");
             add("tiled/module_nine.tmx");
+            add("tiled/module_ten.tmx");
+            add("tiled/module_eleven.tmx");
         }
     };
 
