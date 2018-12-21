@@ -20,6 +20,7 @@ import com.team.retrogame.Scenes.Hud;
 import com.team.retrogame.Scenes.PauseScreen;
 import com.team.retrogame.Sprites.Blobb;
 import com.team.retrogame.Tools.B2WorldCreator;
+import com.team.retrogame.Tools.MainInputHandler;
 import com.team.retrogame.Tools.WorldContactListener;
 import com.team.retrogame.RetroGame;
 
@@ -59,11 +60,11 @@ public class PlayScreen implements Screen {
     private Blobb player;
 
     //music
-    private Music music;
+    public Music music;
 
     //pause State shifting variables
-    private boolean setToPause;
-    private boolean setToResume;
+    public boolean setToPause;
+    public boolean setToResume;
 
     //modules/module utilities
     private Random rand = new Random();
@@ -132,6 +133,8 @@ public class PlayScreen implements Screen {
 
         setToPause = false;
         setToResume = false;
+
+        Gdx.input.setInputProcessor(new MainInputHandler(this, player));
     }
 
     public TextureAtlas getAtlas() {
@@ -144,139 +147,7 @@ public class PlayScreen implements Screen {
 
     }
 
-    private void handleInput(float dt) {
-        //control RetroGame using immediate impulses
-
-        //if Blobb isn't dead, these inputs are valid
-        if(player.currentState != Blobb.State.DYING) {
-            //if game isn't paused and player isn't performing a special action, these inputs are valid
-            if(setToResume || !setToPause) {
-                //if player is standing or running
-                if(player.currentState == Blobb.State.STANDING || player.currentState == Blobb.State.RUNNING) {
-                    player.canFloat = true;
-                    player.canDash = true;
-                    if (Gdx.input.isKeyPressed(Input.Keys.A))
-                        player.moveLeftGround();
-                    if (Gdx.input.isKeyPressed(Input.Keys.D))
-                        player.moveRightGround();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                        player.startGroundJump();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
-                        player.startFloat();
-                }
-
-                //if player is jumping or falling
-                if(player.currentState == Blobb.State.JUMPING || player.currentState == Blobb.State.FALLING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.A))
-                        player.moveLeftAir();
-                    if (Gdx.input.isKeyPressed(Input.Keys.D))
-                        player.moveRightAir();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
-                        player.startFloat();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
-                        player.startDash();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-                        player.startPound();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
-                        player.startGrab();
-                }
-
-                //if player is dashing
-                if(player.currentState == Blobb.State.DASHING) {
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
-                        player.startFloat();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-                        player.startPound();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
-                        player.startGrab();
-                }
-
-                //if player is floating
-                if(player.currentState == Blobb.State.FLOATING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.A))
-                        player.moveLeftFloat();
-                    if (Gdx.input.isKeyPressed(Input.Keys.D))
-                        player.moveRightFloat();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-                        player.startPound();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
-                        player.startDash();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-                        player.startPound();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.L) && player.touchingWall)
-                        player.startGrab();
-                }
-
-                //if player is pounding
-                if(player.currentState == Blobb.State.POUNDING) {
-
-                }
-
-
-                //if player is splatting
-                if(player.currentState == Blobb.State.SPLATTING) {
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                        player.startButtBounce();
-                }
-
-                //if player is sliding
-                if(player.currentState == Blobb.State.SLIDING) {
-                    if (Gdx.input.isKeyPressed(Input.Keys.A))
-                        player.moveLeftSlide();
-                    if (Gdx.input.isKeyPressed(Input.Keys.D))
-                        player.moveRightSlide();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
-                        player.startFloat();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
-                        player.startDash();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-                        player.startPound();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.L))
-                        player.startGrab();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                        player.wallJump();
-                }
-
-                //if player is grabbing
-                if(player.currentState == Blobb.State.GRABBING) {
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.K) && (player.canFloat))
-                        player.startFloat();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.J) && (player.canDash))
-                        player.startDash();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.H))
-                        player.startPound();
-                    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                        player.wallJump();
-                    if (!Gdx.input.isKeyPressed(Input.Keys.L))
-                        player.startSlide();
-                }
-            }
-
-            //pause and unpause functionality
-            if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-                if (!setToPause)
-                    pause();
-
-                else if (!setToResume)
-                    resume();
-            }
-
-            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-                if (music.getVolume() != 0)
-                    music.setVolume(0);
-                else
-                    music.setVolume(0.3f);
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            player.floorClear = true;
-        }
-    }
-
     private void update(float dt) {
-        //handle user input first
-        handleInput(dt);
 
         if (setToResume || !setToPause) {
 
