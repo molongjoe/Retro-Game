@@ -225,7 +225,7 @@ public class Blobb extends Sprite {
         touchingWall = onLeftWall || onRightWall;
 
         //if the blobb has landed, the float properties have been reset
-        if (feetOnGround)
+        if (feetOnGround && currentState != State.FLOATING)
             initialFloat = true;
 
         if (setToFall && b2Body.getLinearVelocity().y < 0)
@@ -392,7 +392,7 @@ public class Blobb extends Sprite {
     private State getState(){
         if (!specialMovement()) {
             //if touching a wall in midair and falling, Blobb is sliding
-             if ((touchingWall && !feetOnGround && b2Body.getLinearVelocity().y < 0)) {
+             if (((onLeftWall && !facingRight) || (onRightWall && facingRight)) && !feetOnGround && b2Body.getLinearVelocity().y < 0) {
                  startSlide();
                  return State.SLIDING; }
             //if positive in Y-Axis or negative but was jumping, Blobb is jumping
