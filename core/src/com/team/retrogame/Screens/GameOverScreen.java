@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 //GameOverScreen replaces PlayScreen when RetroGame dies

@@ -17,7 +17,7 @@ import com.team.retrogame.RetroGame;
 import com.team.retrogame.Screens.PlayScreen;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 //InteractiveTileObject defines all tiles RetroGame can interact with

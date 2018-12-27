@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 public class RetroGame extends Game {
@@ -43,10 +43,9 @@ public class RetroGame extends Game {
 	public static final short BLOBB_RIGHT_BIT = 32;
 	public static final short SPIKE_BIT = 64;
 	public static final short TRAMPOLINE_BIT = 128;
-	public static final short PLATFORM_ON_BIT = 256;
-	public static final short PLATFORM_OFF_BIT = 512;
-	public static final short CRUMBLE_PLATFORM_BIT = 1024;
-	public static final short GOAL_BIT = 2048;
+	public static final short PLATFORM_BIT = 256;
+	public static final short CRUMBLE_PLATFORM_BIT = 512;
+	public static final short GOAL_BIT = 1024;
 
 	//Universal SpriteBatch. All sprites contained, and passed around by this one instance
 	public SpriteBatch batch;

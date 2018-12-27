@@ -12,9 +12,10 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.team.retrogame.RetroGame;
 import com.team.retrogame.Screens.PlayScreen;
+import com.team.retrogame.Tools.MainInputHandler;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 //Sprite class for Blobb. Draws physics body, sprites, and handles behavior
@@ -43,6 +44,8 @@ public class Blobb extends Sprite {
     public PlayScreen screen;
     public Body b2Body;
 
+    public MainInputHandler inputHandler;
+
     //All sprite Texture Regions and Animations for Blobb
     private TextureRegion BlobbStand;
     private Animation<TextureRegion> BlobbRun;
@@ -70,9 +73,9 @@ public class Blobb extends Sprite {
     public boolean canDash = true;
     public boolean initialFloat = true;
     public float buttBounceHeight = 0;
+    public float buttBounceBottom = 0;
+    public float longPressThreshold = 0.35f;
 
-    public boolean setToGroundMove = false;
-    public boolean setToAirMove = false;
     public boolean setToJump = false;
     public boolean setToFall = false;
     public boolean setToPound = false;
@@ -86,17 +89,6 @@ public class Blobb extends Sprite {
 
     public boolean floorClear = false;
     public boolean deadStatus = false;
-
-    public boolean moveLeftGroundFlag = false;
-    public boolean moveRightGroundFlag = false;
-    public boolean moveLeftAirFlag = false;
-    public boolean moveRightAirFlag = false;
-    public boolean moveLeftFloatFlag = false;
-    public boolean moveRightFloatFlag = false;
-    public boolean moveLeftSlideFlag = false;
-    public boolean moveRightSlideFlag = false;
-    public boolean groundJumpFlag = false;
-    public boolean wallJumpFlag = false;
 
 
     public Blobb(PlayScreen screen) {
@@ -231,6 +223,17 @@ public class Blobb extends Sprite {
         if (setToFall && b2Body.getLinearVelocity().y < 0)
             setToFall = false;
 
+        if (feetOnGround) {
+            canDash = true;
+            canFloat = true;
+        }
+
+        if ((currentState == State.POUNDING || currentState == State.JUMPING || currentState == State.FALLING) && (screen.getInputHandler().longPress) && (canFloat)) {
+            startFloat();
+        }
+
+        incrementTapTime(dt);
+
         /*
         System.out.println("feet: " + feetOnGround + " " +
                 "head: " + headOnCeiling + " " +
@@ -301,16 +304,27 @@ public class Blobb extends Sprite {
                 break;
         }
 
-        //if Blobb is moving left and the texture isn't facing left... flip it.
-        if ((b2Body.getLinearVelocity().x < 0 || !facingRight) && !region.isFlipX()) {
-            region.flip(true, false);
-            facingRight = false;
+        //make sure texture is facing the right way
+        if (currentState != State.SLIDING && currentState != State.GRABBING) {
+            //if Blobb is moving left and the texture isn't facing left... flip it.
+            if ((b2Body.getLinearVelocity().x < 0 || !facingRight) && !region.isFlipX()) {
+                region.flip(true, false);
+                facingRight = false;
+            }
+
+            //if Blobb is moving right and the texture isnt facing right... flip it.
+            else if ((b2Body.getLinearVelocity().x > 0 || facingRight) && region.isFlipX()) {
+                region.flip(true, false);
+                facingRight = true;
+            }
         }
 
-        //if Blobb is moving right and the texture isnt facing right... flip it.
-        else if ((b2Body.getLinearVelocity().x > 0 || facingRight) && region.isFlipX()) {
-            region.flip(true, false);
-            facingRight = true;
+        //if Blobb is sliding, make sure texture is flipped correctly
+        else {
+            if (onLeftWall && !region.isFlipX())
+                region.flip(true, false);
+            else if (onRightWall && region.isFlipX())
+                region.flip(true,false);
         }
 
         //if the current state is the same as the previous state increase the state timer.
@@ -349,7 +363,7 @@ public class Blobb extends Sprite {
         fdef.filter.maskBits = RetroGame.GROUND_BIT |
                 RetroGame.SPIKE_BIT |
                 RetroGame.TRAMPOLINE_BIT |
-                RetroGame.PLATFORM_ON_BIT |
+                RetroGame.PLATFORM_BIT |
                 RetroGame.CRUMBLE_PLATFORM_BIT |
                 RetroGame.GOAL_BIT;
         fdef.shape = shape;
@@ -456,19 +470,15 @@ public class Blobb extends Sprite {
         return stateTimer;
     }
 
-    public void setCurrentState(State newState) {
-        currentState = newState;
-    }
-
     //this method defines all normal left and right movement
     public void normalMovementHandler() {
         //put a cap on left movement speed
         if (Gdx.input.isKeyPressed(Input.Keys.A))
-            if (b2Body.getLinearVelocity().x >= -2)
+            if (b2Body.getLinearVelocity().x >= -1.3f)
                 b2Body.applyLinearImpulse(new Vector2(-0.08f, 0), b2Body.getWorldCenter(), true);
         //put a cap on right movement speed
         if (Gdx.input.isKeyPressed(Input.Keys.D))
-            if (b2Body.getLinearVelocity().x <= 2)
+            if (b2Body.getLinearVelocity().x <= 1.3f)
                 b2Body.applyLinearImpulse(new Vector2(0.08f, 0), b2Body.getWorldCenter(), true);
     }
 
@@ -520,10 +530,20 @@ public class Blobb extends Sprite {
     }
 
     public void standCheck() {
+        canFloat = true;
         normalMovementHandler();
     }
 
     public void runCheck() {
+        //if not moving, the player will slow down rapidly
+        if ((!Gdx.input.isKeyPressed(Input.Keys.A)) && (!Gdx.input.isKeyPressed(Input.Keys.D))) {
+            if (b2Body.getLinearVelocity().x > 0.1f)
+                b2Body.applyLinearImpulse(new Vector2(-0.1f, 0), b2Body.getWorldCenter(), true);
+            if (b2Body.getLinearVelocity().x < -0.1f)
+                b2Body.applyLinearImpulse(new Vector2(0.1f, 0), b2Body.getWorldCenter(), true);
+        }
+
+        canFloat = true;
         normalMovementHandler();
     }
 
@@ -537,13 +557,12 @@ public class Blobb extends Sprite {
 
     public void jumpCheck() {
         //if not pressing space, the player will stop ascending in a jump
-        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE))
-            startFall();
-
-        if (setToFall)
+        if (setToFall) {
             if (b2Body.getLinearVelocity().y >= 0)
                 b2Body.applyLinearImpulse(new Vector2(0, -0.3f), b2Body.getWorldCenter(), true);
+        }
 
+        longPressThreshold = 0.35f;
         normalMovementHandler();
     }
 
@@ -551,27 +570,10 @@ public class Blobb extends Sprite {
         //set velocity to zero to accomodate for impulse
         b2Body.setLinearVelocity(0,0);
 
-        //take in the modifier keys being input and apply the linear impulse based on the combination and which wall the blobb is on
-        if (Gdx.input.isKeyPressed(Input.Keys.W) && onRightWall)
-            b2Body.applyLinearImpulse(new Vector2(-0.5f, 2), b2Body.getWorldCenter(), true);
-        else if (Gdx.input.isKeyPressed(Input.Keys.W) && onLeftWall)
-            b2Body.applyLinearImpulse(new Vector2(0.5f, 2), b2Body.getWorldCenter(), true);
-
-        else if (Gdx.input.isKeyPressed(Input.Keys.A) && onRightWall)
-            b2Body.applyLinearImpulse(new Vector2(-2, 0.5f), b2Body.getWorldCenter(), true);
-        else if (Gdx.input.isKeyPressed(Input.Keys.D) && onLeftWall)
-            b2Body.applyLinearImpulse(new Vector2(2, 0.5f), b2Body.getWorldCenter(), true);
-
-        else if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.W) && onRightWall)
-            b2Body.applyLinearImpulse(new Vector2(-1.5f, 1.3f), b2Body.getWorldCenter(), true);
-        else if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.W) && onLeftWall)
-            b2Body.applyLinearImpulse(new Vector2(1.5f, 1.3f), b2Body.getWorldCenter(), true);
-
-
-        else if (onRightWall)
-            b2Body.applyLinearImpulse(new Vector2(-1, 0.5f), b2Body.getWorldCenter(), true);
+        if (onRightWall)
+            b2Body.applyLinearImpulse(new Vector2(-1, 1.7f), b2Body.getWorldCenter(), true);
         else if (onLeftWall)
-            b2Body.applyLinearImpulse(new Vector2(1, 0.5f), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(1, 1.7f), b2Body.getWorldCenter(), true);
 
         normalMovementHandler();
 
@@ -587,6 +589,7 @@ public class Blobb extends Sprite {
     }
 
     public void fallCheck() {
+        longPressThreshold = 0.35f;
         normalMovementHandler();
     }
 
@@ -606,6 +609,9 @@ public class Blobb extends Sprite {
             b2Body.setLinearVelocity(0,0);
             b2Body.setGravityScale(0);
         }
+
+        longPressThreshold = 0.14f;
+        normalMovementHandler();
     }
 
     public void startSplat() {
@@ -614,25 +620,46 @@ public class Blobb extends Sprite {
     }
 
     public void splatCheck() {
+        if (BlobbSplat.isAnimationFinished(stateTimer)) {
+            setToSplat = false;
+            buttBounceBottom = b2Body.getPosition().y;
+            startButtBounce();
+        }
+        else
+            b2Body.setLinearVelocity(0,0);
     }
 
     public void startButtBounce() {
         clearMovementFlags();
         setToButtBounce = true;
 
-        //TODO: Make butt bounce speed in ascent proportionate to height (currently static speed)
         b2Body.setGravityScale(0);
-        b2Body.applyLinearImpulse(new Vector2(0, 1.8f), b2Body.getWorldCenter(), true);
+
+        //change speed of ascent based on how big the drop is
+        if (buttBounceHeight - buttBounceBottom < 0.5f)
+            b2Body.applyLinearImpulse(new Vector2(0, 1.6f), b2Body.getWorldCenter(), true);
+        else if (buttBounceHeight - buttBounceBottom < 1)
+            b2Body.applyLinearImpulse(new Vector2(0, 1.8f), b2Body.getWorldCenter(), true);
+        else if (buttBounceHeight - buttBounceBottom < 1.5f)
+            b2Body.applyLinearImpulse(new Vector2(0, 2), b2Body.getWorldCenter(), true);
+        else if (buttBounceHeight - buttBounceBottom < 2)
+            b2Body.applyLinearImpulse(new Vector2(0, 2.2f), b2Body.getWorldCenter(), true);
+        else if (buttBounceHeight - buttBounceBottom < 2.5f)
+            b2Body.applyLinearImpulse(new Vector2(0, 2.3f), b2Body.getWorldCenter(), true);
+        else
+            b2Body.applyLinearImpulse(new Vector2(0, 2.4f), b2Body.getWorldCenter(), true);
 
         RetroGame.manager.get("audio/sounds/splatUp.mp3", Sound.class).play(0.1f);
     }
 
     public void buttBounceCheck() {
         //if the blobb exceeds his starting height or if the player releases space, tge ascent is halted
-        if (b2Body.getPosition().y >= buttBounceHeight || !Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        if (b2Body.getPosition().y >= buttBounceHeight)
             b2Body.setGravityScale(0.5f);
+
+        if (b2Body.getLinearVelocity().y < 0)
             setToButtBounce = false;
-        }
+
         normalMovementHandler();
     }
 
@@ -653,18 +680,24 @@ public class Blobb extends Sprite {
 
     public void floatCheck(float floatTimer) {
         //if key isn't pressed or timer is exceeded threshold or the player is on the ground or set to grab
-        if (!Gdx.input.isKeyPressed(Input.Keys.K) || floatTimer > 5 || (feetOnGround && b2Body.getLinearVelocity().y == 0) || setToGrab) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE) || floatTimer > 5 || (feetOnGround && b2Body.getLinearVelocity().y == 0) || setToGrab) {
             setToFloat = false;
             b2Body.setGravityScale(0.5f);
 
             if (floatTimer > 5) {
                 canFloat = false;
                 RetroGame.manager.get("audio/sounds/pop.mp3", Sound.class).play(0.4f);
+
+                /*
+                TODO: these next three lines counteract the above lines. Just a placeholder until we have something to take the place of an empty float
+                 */
+                canFloat = true;
+                initialFloat = true;
+                startFloat();
             }
             else
                 canFloat = true;
         }
-
         else
             floatMovementHandler();
     }
@@ -695,7 +728,7 @@ public class Blobb extends Sprite {
 
     public void grabCheck() {
         //if not pressing the grab key or not touching wall, grab ends
-        if (!Gdx.input.isKeyPressed(Input.Keys.L)){
+        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             startSlide();
         } else if (!touchingWall) {
             setToGrab = false;
@@ -705,6 +738,7 @@ public class Blobb extends Sprite {
         else {
             b2Body.setLinearVelocity(0,0);
             b2Body.setGravityScale(0);
+            canDash = true;
         }
     }
 
@@ -728,7 +762,12 @@ public class Blobb extends Sprite {
             canDash = false;
         }
         else if (touchingWall) {
-            startSlide();
+            setToDash = false;
+            canDash = false;
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                startGrab();
+            else
+                startSlide();
         }
 
         else
@@ -797,10 +836,24 @@ public class Blobb extends Sprite {
         return floorClear;
     }
 
+    //method uses delta time to increment the tap state time depending on the current tap state
+    public void incrementTapTime(float dt) {
+        if (screen.getInputHandler().currentTapState == MainInputHandler.tapState.TAPPED)
+            screen.getInputHandler().incrementTappedTime(dt);
+
+        if (screen.getInputHandler().currentTapState == MainInputHandler.tapState.RELEASED)
+            screen.getInputHandler().incrementReleasedTime(dt);
+
+        //if tapped for long enough, the tap is a long press
+        if (screen.getInputHandler().tappedTime > longPressThreshold)
+            screen.getInputHandler().longPress = true;
+        else
+            screen.getInputHandler().longPress = false;
+    }
+
     //Draw Blobb's physics body in the world
     public void draw(Batch batch){
         super.draw(batch);
     }
-
 
 }

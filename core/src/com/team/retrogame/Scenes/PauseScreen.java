@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.team.retrogame.RetroGame;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 //As written, this functionality does nothing. In the future, a label could be added

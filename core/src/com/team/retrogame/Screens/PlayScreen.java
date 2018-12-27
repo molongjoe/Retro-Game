@@ -2,18 +2,20 @@ package com.team.retrogame.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.team.retrogame.Scenes.Hud;
@@ -29,7 +31,7 @@ import java.util.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 public class PlayScreen implements Screen {
@@ -61,6 +63,9 @@ public class PlayScreen implements Screen {
 
     //music
     public Music music;
+
+    //Input Handler
+    private MainInputHandler inputHandler;
 
     //pause State shifting variables
     public boolean setToPause;
@@ -134,7 +139,8 @@ public class PlayScreen implements Screen {
         setToPause = false;
         setToResume = false;
 
-        Gdx.input.setInputProcessor(new MainInputHandler(this, player));
+        inputHandler = new MainInputHandler(this, player);
+        Gdx.input.setInputProcessor(inputHandler);
     }
 
     public TextureAtlas getAtlas() {
@@ -234,19 +240,17 @@ public class PlayScreen implements Screen {
     }
 
     private boolean gameOver() {
-        if(player.currentState == Blobb.State.DYING && player.getStateTimer() > 3) {
-            return true;
-        }
-        return false;
+        return (player.currentState == Blobb.State.DYING && player.getStateTimer() > 3);
     }
 
     private boolean floorClear() {
         //if player has reached the top of the floor, the module is complete
-        if ((player.getY() > RetroGame.V_HEIGHT/RetroGame.PPM) &&
-                ((player.currentState == Blobb.State.STANDING) || (player.currentState == Blobb.State.RUNNING))) {
-            return true;
-        }
-        return false;
+        return ((player.getY() > RetroGame.V_HEIGHT/RetroGame.PPM) &&
+                ((player.currentState == Blobb.State.STANDING) || (player.currentState == Blobb.State.RUNNING)));
+    }
+
+    public MainInputHandler getInputHandler() {
+        return inputHandler;
     }
 
     @Override

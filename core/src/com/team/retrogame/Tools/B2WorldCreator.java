@@ -13,7 +13,7 @@ import com.team.retrogame.RetroGame;
 import com.team.retrogame.Screens.PlayScreen;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 /*
@@ -97,7 +97,7 @@ public class B2WorldCreator {
 
             shape.setAsBox((rect.getWidth() / 2) / RetroGame.PPM, (rect.getHeight() / 2) / RetroGame.PPM);
             fdef.shape = shape;
-            fdef.filter.categoryBits = RetroGame.PLATFORM_ON_BIT;
+            fdef.filter.categoryBits = RetroGame.PLATFORM_BIT;
             body.createFixture(fdef);
         }
 

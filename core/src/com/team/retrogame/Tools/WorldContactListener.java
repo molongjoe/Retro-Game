@@ -9,7 +9,7 @@ import com.team.retrogame.Sprites.Blobb;
 import java.sql.Blob;
 
 /**
- * created by Ben Mankin on 09/13/18.
+ * created by Blobb Team on 09/13/18.
  */
 
 /*
@@ -86,6 +86,7 @@ public class WorldContactListener implements ContactListener {
                 break;
 
 
+                /*
             //Blobb collides from above with a platform that is deactivated. Turn it on. Otherwise, leave it off (do nothing)
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.PLATFORM_ON_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT) {
@@ -93,6 +94,7 @@ public class WorldContactListener implements ContactListener {
                         Filter filter = new Filter();
                         filter.maskBits = RetroGame.BLOBB_GENERAL_BIT;
                         fixB.setFilterData(filter);
+                        fixB.
                     }
 
                     else if (fixA.getBody().getLinearVelocity().y > 0){
@@ -115,11 +117,9 @@ public class WorldContactListener implements ContactListener {
                     }
                 }
                 break;
+                */
 
-
-            }
-
-            /*
+                /*
             //Blobb collides with crumble platform
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.CRUMBLE_PLATFORM_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.CRUMBLE_PLATFORM_BIT)
@@ -129,6 +129,7 @@ public class WorldContactListener implements ContactListener {
                 break;
             }*/
 
+            }
         }
 
 
@@ -176,6 +177,10 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Blobb) fixB.getUserData()).onRightWall = false;
                 break;
+
+
+
+                /*
             //Blobb has ended collision with a platform that was activated. Turn off the one way platform
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.PLATFORM_ON_BIT:
                 if (fixA.getFilterData().categoryBits == RetroGame.BLOBB_GENERAL_BIT) {
@@ -190,7 +195,6 @@ public class WorldContactListener implements ContactListener {
                 }
 
 
-            /*
             //Blobb has ended collision with a one way platform
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.ONE_WAY_PLATFORM_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.ONE_WAY_PLATFORM_BIT)
@@ -198,9 +202,8 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Platform) fixB.getUserData()).checkStandable();
                 break;
-            */
 
-            /*
+
             //Blobb has ended collision with a crumble platform
             case RetroGame.BLOBB_GENERAL_BIT | RetroGame.CRUMBLE_PLATFORM_BIT:
                 if(fixA.getFilterData().categoryBits == RetroGame.CRUMBLE_PLATFORM_BIT)
@@ -208,7 +211,9 @@ public class WorldContactListener implements ContactListener {
                 else
                     ((Platform) fixB.getUserData()).crumble();
                 break;
-            */
+
+                */
+
         }
 
     }
